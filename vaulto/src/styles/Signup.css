@@ -16,3 +16,68 @@
 .icon img {
     filter: brightness(1) invert(0);
 }
+
+.terms-box {
+    margin-top: 20px;
+    font-size: 14px;
+    color: #cfcfcf;
+    width: 90%;
+    line-height: 1.5;
+}
+
+.terms-box a {
+    color: #38d0c5;
+    /* teal blue like your footer bar */
+    text-decoration: none;
+}
+
+.create-btn {
+    margin-top: 30px;
+    background-color: white;
+    color: black;
+    padding: 16px 0;
+    border-radius: 40px;
+    border: none;
+    font-size: 20px;
+    font-weight: 600;
+    width: 70%;
+    align-self: center;
+}
+
+.otp-container {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.otp-box {
+    width: 40px;
+    height: 48px;
+    background-color: #222;
+    border: none;
+    border-radius: 6px;
+    font-size: 22px;
+    color: white;
+    text-align: center;
+}
+
+.otp-box:focus {
+    outline: 2px solid #34c9b6;
+    /* teal */
+}
+
+.otp-links {
+    margin-top: 20px;
+    text-align: center;
+    color: #b3b3b3;
+    font-size: 14px;
+}
+
+.otp-links a {
+    color: #34c9b6;
+    text-decoration: none;
+    font-weight: 500;
+}

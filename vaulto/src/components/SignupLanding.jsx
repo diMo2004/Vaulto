@@ -18,7 +18,7 @@ export default function SignupLanding() {
           <img src={EmailIcon} alt="email" className="icon" />Continue with email
         </button>
 
-        <button className="landing-btn"><img src={PhoneIcon} alt="phone" className="icon" />Continue with phone number</button>
+        <button className="landing-btn" onClick={() => navigate("/login/phone")}><img src={PhoneIcon} alt="phone" className="icon" />Continue with phone number</button>
         <button className="landing-btn"><img src={GoogleIcon} alt="google" className="icon" />Continue with Google</button>
       </div>
     </>

@@ -23,7 +23,8 @@ body {
 }
 
 .page-title {
-  margin-left: 10px;
+  display: flex;
+  align-items: center;
   font-size: 18px;
   font-weight: bold;
 }

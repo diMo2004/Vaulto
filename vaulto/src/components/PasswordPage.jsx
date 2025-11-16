@@ -2,18 +2,21 @@
 import { useContext } from "react";
 import { SignupContext } from "../context/SignupContext";
 import { useNavigate } from "react-router-dom";
+import "../styles/Signup.css";
 
 export default function PasswordPage() {
   const { password, setPassword } = useContext(SignupContext);
   const navigate = useNavigate();
+  const { email } = useContext(SignupContext);
 
   const handleNext = () => {
     if (!password || password.length < 10) {
       alert("Password must be at least 10 characters.");
       return;
     }
-    alert("Password saved!");
-    // navigate("/next-step")
+    navigate("/signup/username", {
+      state: { email, password }
+    });
   };
 
   return (
