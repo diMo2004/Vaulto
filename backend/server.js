@@ -40,3 +40,17 @@ mongoose.connect(process.env.MONGO_URI, { })
   }).catch(err => {
     console.error("MongoDB connection error:", err);
   });
+
+app.get("/auth/google",
+  passport.authenticate("google", { scope: ["profile", "email"] })
+);
+
+app.get("/auth/google/callback",
+  passport.authenticate("google", {
+    failureRedirect: "http://localhost:3000/login"
+  }),
+  (req, res) => {
+    // Successful login
+    res.redirect("http://localhost:3000/dashboard");
+  }
+);

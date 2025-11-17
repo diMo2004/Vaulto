@@ -28,7 +28,8 @@ export default function PhoneOTP() {
       return;
     }
 
-    alert("Phone number verified");
+    console.log("Phone number verified");
+    navigate("/dashboard");
   };
 
   return (

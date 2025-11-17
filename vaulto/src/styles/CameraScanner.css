@@ -1,0 +1,81 @@
+.scanner-page {
+    background: #0d1b2a;
+    min-height: 100vh;
+    color: white;
+    text-align: center;
+    padding: 20px;
+}
+
+.camera-preview {
+    width: 90%;
+    border-radius: 12px;
+    margin-top: 20px;
+}
+
+.scan-btn {
+    margin-top: 20px;
+    padding: 12px 25px;
+    background: linear-gradient(to right, #4cc9f0, #7209b7);
+    border: none;
+    color: white;
+    font-size: 16px;
+    border-radius: 20px;
+    cursor: pointer;
+}
+
+.captured-img {
+    width: 90%;
+    border-radius: 10px;
+}
+
+.processing {
+    margin-top: 15px;
+    font-size: 18px;
+    color: #4cc9f0;
+}
+
+.ocr-text {
+    background: #1b263b;
+    padding: 15px;
+    border-radius: 10px;
+    text-align: left;
+    max-height: 200px;
+    overflow-y: auto;
+    color: #d0d0d0;
+}
+
+.upload-input {
+    margin-top: 20px;
+    padding: 12px;
+    background: #16213e;
+    color: white;
+    border-radius: 10px;
+}
+
+.upload-input::file-selector-button {
+    background: #4cc9f0;
+    color: white;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+.continue-btn {
+    margin-top: 20px;
+    padding: 12px 20px;
+    background: linear-gradient(to right, #3a0ca3, #7209b7);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 18px;
+    cursor: pointer;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.continue-btn:hover {
+    opacity: 0.9;
+}

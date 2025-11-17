@@ -8,6 +8,10 @@ import "../styles/Signup.css";
 
 export default function SignupLanding() {
   const navigate = useNavigate();
+  const handleGoogleLogin = () => {
+    // Implement Google OAuth flow here
+    window.location.href = "http://localhost:8080/auth/google";
+  }
 
   return (
     <>
@@ -19,7 +23,7 @@ export default function SignupLanding() {
         </button>
 
         <button className="landing-btn" onClick={() => navigate("/login/phone")}><img src={PhoneIcon} alt="phone" className="icon" />Continue with phone number</button>
-        <button className="landing-btn"><img src={GoogleIcon} alt="google" className="icon" />Continue with Google</button>
+        <button className="landing-btn" onClick={handleGoogleLogin}><img src={GoogleIcon} alt="google" className="icon" />Continue with Google</button>
       </div>
     </>
   );

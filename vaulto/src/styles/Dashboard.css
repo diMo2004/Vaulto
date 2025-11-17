@@ -1,0 +1,157 @@
+.dashboard {
+    background: #0d1b2a;
+    min-height: 100vh;
+    color: white;
+    text-align: center;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    align-items: center;
+}
+
+.profile-btn,
+.add-btn {
+    background: #16213e;
+    border: none;
+    color: white;
+    padding: 8px 14px;
+    border-radius: 20px;
+    cursor: pointer;
+}
+
+.logo {
+    font-size: 32px;
+    background: linear-gradient(to right, #3a86ff, #ff006e);
+    -webkit-background-clip: text;
+    color: transparent;
+}
+
+.subtitle {
+    margin-top: -10px;
+    opacity: 0.7;
+}
+
+/* Swipeable category list */
+.categories-container {
+    display: flex;
+    gap: 16px;
+    padding: 20px;
+    overflow-x: auto;
+    white-space: nowrap;
+    scrollbar-width: none;
+}
+
+.categories-container::-webkit-scrollbar {
+    display: none;
+}
+
+.category-card {
+    background: #1b263b;
+    padding: 12px 18px;
+    border-radius: 16px;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    width: 80px;
+}
+
+.cat-icon {
+    font-size: 24px;
+    margin-bottom: 6px;
+}
+
+.empty-state {
+    margin-top: 70px;
+}
+
+.empty-icon {
+    font-size: 50px;
+    opacity: 0.5;
+}
+
+.primary-btn {
+    margin-top: 20px;
+    padding: 12px 26px;
+    background: linear-gradient(to right, #4cc9f0, #8338ec);
+    border: none;
+    color: white;
+    border-radius: 20px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+/* Bottom navigation */
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: #1b263b;
+    padding: 14px 0;
+    display: flex;
+    justify-content: space-around;
+}
+
+.nav-item {
+    display: flex;
+    flex-direction: column;
+    color: white;
+    opacity: 0.8;
+}
+
+/* Bottom Navigation Bar */
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: #1b263b;
+    padding: 8px 0;
+    display: flex;
+    justify-content: space-around;
+    box-shadow: 0px -3px 10px rgba(0, 0, 0, 0.4);
+}
+
+/* Each Button */
+.nav-btn {
+    background: none;
+    border: none;
+    color: #d0d0d0;
+    flex: 1;
+    text-align: center;
+    padding: 10px 0;
+    cursor: pointer;
+    outline: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: 0.2s ease;
+    font-size: 15px;
+}
+
+/* Icon Styling */
+.nav-icon {
+    font-size: 22px;
+}
+
+/* Label */
+.nav-label {
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+/* Highlight active page */
+.nav-btn.active {
+    color: #4fc3f7;
+    /* light blue */
+    font-weight: 600;
+}
+
+/* Button Press Feedback */
+.nav-btn:active {
+    transform: scale(0.93);
+}

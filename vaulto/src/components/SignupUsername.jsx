@@ -24,7 +24,8 @@ export default function SignupUsername() {
       username
     });
 
-    alert("Account created successfully!");
+    console.log("Account created successfully!");
+    navigate("/dashboard");
   };
 
   return (

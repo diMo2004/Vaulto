@@ -9,6 +9,12 @@ import SignupGender from "./components/SignupGender";
 import SignupUsername from "./components/SignupUsername";
 import PhoneLogin from "./components/PhoneLogin";
 import PhoneOTP from "./components/PhoneOTP";
+import Dashboard from "./components/Dashboard";
+import ScanCoupon from "./components/ScanCoupon";
+import CameraScanner from "./components/CameraScanner.jsx";
+import UploadScanner from "./components/UploadScanner";
+import SearchPage from "./components/SearchPage";
+import AddCoupon from "./components/AddCoupon";
 import "./App.css";
 
 function App() {
@@ -24,6 +30,12 @@ function App() {
           <Route path="/signup/username" element={<SignupUsername />} />
           <Route path="/login/phone" element={<PhoneLogin />} />
           <Route path="/login/phone-otp" element={<PhoneOTP />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/scan" element={<ScanCoupon />} />
+          <Route path="/scan/camera" element={<CameraScanner />} />
+          <Route path="/scan/upload" element={<UploadScanner />} />
+          <Route path="/search" element={<SearchPage />} />
+          <Route path="/add-coupon" element={<AddCoupon />} />
         </Routes>
       </Router>
     </SignupProvider>

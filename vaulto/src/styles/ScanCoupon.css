@@ -1,0 +1,50 @@
+.scan-page {
+    min-height: 100vh;
+    background: #0d1b2a;
+    color: white;
+    padding: 30px;
+    text-align: center;
+}
+
+.scan-header h1 {
+    background: linear-gradient(to right, #3a86ff, #ff006e);
+    -webkit-background-clip: text;
+    color: transparent;
+    margin-bottom: 5px;
+}
+
+.scan-option {
+    margin-top: 40px;
+}
+
+.scan-card {
+    background: #1b263b;
+    padding: 30px;
+    border-radius: 20px;
+    margin: 20px auto;
+    width: 60%;
+}
+
+.scan-icon {
+    font-size: 40px;
+    margin-bottom: 10px;
+}
+
+.purple {
+    color: #8a2be2;
+}
+
+.green {
+    color: #00ff7f;
+}
+
+.pro-tip {
+    background: #16213e;
+    padding: 15px;
+    margin-top: 40px;
+    border-radius: 15px;
+    width: 70%;
+    margin-left: auto;
+    margin-right: auto;
+    opacity: 0.9;
+}
