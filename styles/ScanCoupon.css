@@ -1,0 +1,142 @@
+:root {
+  --bg: rgb(2, 2, 33);
+  --text: #000000;
+  --card-bg: #f2f2f2;
+  --accent: #3a86ff;
+  --accent2: #ff006e;
+
+  /* sizing helpers */
+  --page-padding: 70px;
+  --card-radius: 30px;
+}
+
+.app-container.dark {
+  --bg: #0d1b2a;
+  --text: #ffffff;
+  --card-bg: #1b263b;
+  --accent: #3a86ff;
+  --accent2: #ff006e;
+}
+
+/* global box-sizing (if not already set elsewhere) */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* Scan page main wrapper */
+.scan-page {
+  min-height: 100vh;
+  background: var(--bg);
+  color: white;
+  padding: var(--page-padding);
+  text-align: center;
+   min-height: calc(100vh - 64px);
+  transition: background 180ms ease, color 180ms ease;
+}
+
+
+/* gradient title text */
+.scan-header h1 {
+  background: linear-gradient(to right, var(--accent), var(--accent2));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent; /* required in many browsers */
+  background-clip: text;
+  color: white;
+  margin-bottom: 8px;
+}
+
+/* card: responsive, no fixed height */
+.scan-card {
+  background: linear-gradient(
+    180deg,
+    #060243 0%,
+    #151675 35%,
+    #0057D6 70%,
+    #0084FF 100%
+  );
+  color: black;
+  padding: 20px;            /* control size with padding, not fixed height */
+  border-radius: var(--card-radius);
+  margin-top: 10px;             /* vertical spacing between cards */
+  width: 50%;             /* keeps card centered and same proportions */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px !important; 
+  box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+}
+
+/* description under the button */
+.scan-desc {
+  margin: 0;
+  color: rgba(255,255,255,0.92);
+  font-size: 15px;
+}
+
+/* pro-tip box */
+.pro-tip {
+  background: none !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  border: none !important;
+  color: white;
+  opacity: 0.85;
+  margin-top: 50px;
+}
+
+
+/* camera button — consistent height and responsive */
+.camera-btn {
+  margin-top: 10px !important;
+  padding: 12px 28px;
+  font-size: 18px;
+  font-weight: 800;
+  color: white;
+  border-radius: 18px;
+  background: transparent;
+  border: 3px solid rgba(56,189,248,0.6);
+  width: 50%;
+  box-shadow: 0 0 18px rgba(56,189,248,0.28);
+  cursor: pointer;
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* hover/active */
+.camera-btn:hover {
+  border-color: #3b82f6;
+  box-shadow: 0 0 22px rgba(59,130,246,0.45);
+  transform: translateY(-3px);
+}
+.camera-btn:active {
+  transform: translateY(-1px);
+  box-shadow: 0 0 16px rgba(59,130,246,0.36);
+}
+
+/* Responsive tweaks */
+@media (max-width: 900px) {
+  :root { --page-padding: 36px; }
+  .camera-btn { width: 260px; font-size: 16px; }
+
+}
+
+@media (max-width: 420px) {
+  .scan-header h1 { font-size: 28px; }
+  .camera-btn { width: 220px; padding: 10px 20px; }
+}
+
+.scan-header h1,
+.scan-header p,
+.scan-desc,
+.pro-tip {
+  color: white;
+}
+
+.capture{
+  margin-bottom: 40px;
+}
