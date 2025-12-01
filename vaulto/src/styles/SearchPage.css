@@ -6,7 +6,9 @@
 }
 
 .search-header {
-    background: linear-gradient(to right, #3a0ca3, #7209b7, #f72585);
+    background: linear-gradient(to right, #3a86ff, #7209b7, #f72585);
+
+
     padding: 25px 20px;
     text-align: center;
     border-bottom-left-radius: 20px;

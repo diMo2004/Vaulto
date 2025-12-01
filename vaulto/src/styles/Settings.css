@@ -1,0 +1,163 @@
+/* src/styles/Settings.css */
+
+.settings-page {
+  min-height: 100vh;
+  background: #050814;
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 80px; /* space for BottomNav */
+}
+
+/* Header */
+.settings-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem 1.5rem 0.75rem;
+}
+
+.settings-back {
+  border: none;
+  background: rgba(255, 255, 255, 0.06);
+  color: #ffffff;
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+
+.settings-title {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.settings-subtitle {
+  margin: 2px 0 0;
+  font-size: 0.85rem;
+  color: #9ca3af;
+}
+
+/* main content */
+.settings-content {
+  padding: 0.75rem 1.5rem 1rem;
+  overflow-y: auto;
+}
+
+.settings-section {
+  margin-bottom: 1.4rem;
+  background: rgba(15, 23, 42, 0.92);
+  border-radius: 18px;
+  padding: 0.75rem 0.9rem;
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.4);
+}
+
+.settings-section-title {
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #6b7280;
+  margin: 0 0 0.35rem 0.25rem;
+}
+
+/* rows */
+.settings-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.55rem 0.25rem;
+  border-radius: 12px;
+}
+
+.settings-row + .settings-row {
+  border-top: 1px solid rgba(55, 65, 81, 0.7);
+}
+
+.settings-row-label {
+  margin: 0;
+  font-size: 0.96rem;
+  font-weight: 500;
+}
+
+.settings-row-desc {
+  margin: 2px 0 0;
+  font-size: 0.78rem;
+  color: #9ca3af;
+}
+
+/* rows that work like links */
+.settings-row-link {
+  cursor: pointer;
+}
+
+.settings-row-link:hover {
+  background: rgba(37, 99, 235, 0.08);
+}
+
+.settings-row-arrow {
+  font-size: 1.2rem;
+  color: #6b7280;
+}
+
+/* switch */
+.settings-switch {
+  position: relative;
+  display: inline-block;
+  width: 42px;
+  height: 22px;
+}
+
+.settings-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.settings-slider {
+  position: absolute;
+  inset: 0;
+  background-color: #374151;
+  border-radius: 999px;
+  transition: 0.25s;
+}
+
+.settings-slider:before {
+  content: "";
+  position: absolute;
+  height: 16px;
+  width: 16px;
+  left: 3px;
+  bottom: 3px;
+  background-color: #e5e7eb;
+  border-radius: 50%;
+  transition: 0.25s;
+}
+
+/* when checked */
+.settings-switch input:checked + .settings-slider {
+  background: linear-gradient(135deg, #1d9bf0, #8b5cf6);
+}
+
+.settings-switch input:checked + .settings-slider:before {
+  transform: translateX(18px);
+}
+
+/* logout */
+.settings-logout {
+  width: 100%;
+  border-radius: 999px;
+  border: none;
+  padding: 0.7rem 1rem;
+  background: rgba(220, 38, 38, 0.16);
+  color: #fecaca;
+  font-weight: 500;
+  font-size: 0.95rem;
+  cursor: pointer;
+  margin-top: 0.2rem;
+}
+
+.settings-logout:hover {
+  background: rgba(248, 113, 113, 0.3);
+}

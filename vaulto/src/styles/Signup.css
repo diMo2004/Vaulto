@@ -5,6 +5,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
 }
 
 .icon img {
@@ -17,47 +18,19 @@
     filter: brightness(1) invert(0);
 }
 
-.terms-box {
-    margin-top: 20px;
-    font-size: 14px;
-    color: #cfcfcf;
-    width: 90%;
-    line-height: 1.5;
-}
-
-.terms-box a {
-    color: #38d0c5;
-    /* teal blue like your footer bar */
-    text-decoration: none;
-}
-
-.create-btn {
-    margin-top: 30px;
-    background-color: white;
-    color: black;
-    padding: 16px 0;
-    border-radius: 40px;
-    border: none;
-    font-size: 20px;
-    font-weight: 600;
-    width: 70%;
-    align-self: center;
-}
-
 .otp-container {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     margin-top: 30px;
     width: 90%;
-    margin-left: auto;
-    margin-right: auto;
+    gap: 16px;
 }
 
 .otp-box {
     width: 40px;
     height: 48px;
     background-color: #222;
-    border: none;
+    border-color: grey;
     border-radius: 6px;
     font-size: 22px;
     color: white;
@@ -66,7 +39,6 @@
 
 .otp-box:focus {
     outline: 2px solid #34c9b6;
-    /* teal */
 }
 
 .otp-links {
@@ -80,4 +52,113 @@
     color: #34c9b6;
     text-decoration: none;
     font-weight: 500;
+    text-decoration: underline;
+}
+
+.sub{
+    text-align: center;
+}
+
+/*username page*/
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background-color: #000;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  color: #fff;
+}
+
+.screen {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 56px 40px 80px; 
+}
+
+.heading {
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+
+.title,
+.input-field,
+.subtext,
+.create-btn,
+.terms-box {
+  width: 100%;
+  max-width: 720px; 
+}
+
+.title {
+  font-size: 0.95rem;
+  margin-bottom: 8px;
+}
+
+
+.input-field {
+  padding: 16px 20px;
+  border-radius: 6px;
+  border: 1px solid #555;
+  background-color: #111;
+  color: #fff;
+  font-size: 1rem;
+  outline: none;
+}
+
+.input-field::placeholder {
+  color: #a0a0a0;
+}
+
+.subtext {
+  font-size: 0.9rem;
+  margin: 10px 0 28px;
+}
+
+.create-btn {
+  display: block;
+  margin: 0 auto 28px; 
+  padding: 14px 40px;
+  width: 220px; 
+  border-radius: 999px;
+  border: none;
+  background-color: #ffffff;
+  color: #000000;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.create-btn:hover {
+  transform: scale(1.02);
+}
+
+.terms-box {
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+
+.terms-box a {
+  color: #34c9b6;
+   text-decoration: underline;
+}
+
+.terms-box a:hover {
+  text-decoration: underline;
+}
+
+.sign {
+  margin-top: 25px;
+  text-align: center;
+  color: #b3b3b3;
+  font-size: 20px;
+  font-weight: 500;
 }

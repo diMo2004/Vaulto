@@ -1,0 +1,164 @@
+/* ===== Coupon Modal ===== */
+
+.coupon-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.8);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 60;
+}
+
+.coupon-modal {
+  width: min(480px, 92vw);
+  max-height: 86vh;
+  background: radial-gradient(circle at top, #111827 0%, #020617 65%);
+  border-radius: 20px;
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  box-shadow: 0 26px 60px rgba(15, 23, 42, 0.95);
+  padding: 1.1rem 1.2rem 1.3rem;
+  color: #e5e7eb;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.coupon-modal-close {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.7rem;
+  border: none;
+  background: transparent;
+  color: #9ca3af;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.coupon-modal-close:hover {
+  color: #e5e7eb;
+}
+
+.coupon-modal-header {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-bottom: 0.8rem;
+}
+
+.coupon-modal-logo {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  object-fit: cover;
+  border: 1px solid rgba(148, 163, 184, 0.5);
+  background: #020617;
+}
+
+.coupon-modal-title-block h2 {
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.coupon-modal-discount {
+  margin-top: 0.2rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #a5b4fc;
+}
+
+/* Body */
+
+.coupon-modal-body {
+  margin-top: 0.4rem;
+  padding-top: 0.4rem;
+  border-top: 1px solid rgba(31, 41, 55, 0.9);
+  overflow-y: auto;
+}
+
+.coupon-modal-row {
+  display: flex;
+  gap: 0.7rem;
+  font-size: 0.9rem;
+  margin-top: 0.6rem;
+}
+
+.coupon-modal-row .label {
+  min-width: 70px;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #9ca3af;
+}
+
+.coupon-modal-row .value {
+  flex: 1;
+  color: #e5e7eb;
+}
+
+.coupon-modal-row .value.code {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Mono",
+    ui-monospace, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",
+    monospace;
+  padding: 0.2rem 0.5rem;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px dashed rgba(148, 163, 184, 0.6);
+  display: inline-flex;
+  align-items: center;
+}
+
+.coupon-modal-row .value.chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  background: rgba(30, 64, 175, 0.3);
+  border: 1px solid rgba(129, 140, 248, 0.6);
+  font-size: 0.8rem;
+}
+
+.coupon-modal-row .value.multiline {
+  white-space: pre-wrap;
+  line-height: 1.4;
+  font-size: 0.9rem;
+  max-height: 42vh;
+  overflow-y: auto;
+}
+
+.coupon-modal-footer {
+  margin-top: 0.9rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid rgba(31, 41, 55, 0.9);
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.coupon-modal-footer button {
+  border-radius: 999px;
+  border: none;
+  padding: 0.35rem 0.9rem;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.coupon-modal-close-btn-secondary {
+  background: rgba(15, 23, 42, 0.9);
+  color: #e5e7eb;
+}
+
+.coupon-modal-close-btn-secondary:hover {
+  background: rgba(31, 41, 55, 0.95);
+}
+
+.coupon-modal-delete-btn {
+  background: #ef4444;
+  color: #f9fafb;
+}
+
+.coupon-modal-delete-btn:hover {
+  background: #dc2626;
+}

@@ -1,13 +1,27 @@
 import mongoose from "mongoose";
 
-const userSchema = new mongoose.Schema({
-  provider: { type: String, default: "local" }, // 'local' or 'google'
-  googleId: { type: String, default: null },
-  email: { type: String, required: true, unique: true, lowercase: true },
-  name: { type: String },
-  password: { type: String }, // hashed for local provider
-  refreshToken: { type: String, default: null }, // stored refresh token
-  createdAt: { type: Date, default: Date.now }
-});
+const UserSchema = new mongoose.Schema(
+  {
+    provider: { type: String, required: true },   // "local" or "google"
 
-export default mongoose.model("User", userSchema);
+    // Local auth
+    email: { type: String, unique: true, sparse: true },
+    password: { type: String },
+
+    // Extra Profile Fields
+    name: { type: String },
+    username: { type: String },
+    dob: { type: String },
+    gender: { type: String },
+
+    // Google login
+    googleId: { type: String },
+    avatar: { type: String },
+
+    // Refresh token for JWT
+    refreshToken: { type: String }
+  },
+  { timestamps: true }
+);
+
+export default mongoose.model("User", UserSchema);

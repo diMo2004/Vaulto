@@ -11,7 +11,7 @@ export default function PasswordPage() {
 
   const handleNext = () => {
     if (!password || password.length < 10) {
-      alert("Password must be at least 10 characters.");
+      alert("The password must contain at least 10 characters.");
       return;
     }
     navigate("/signup/username", {
@@ -26,13 +26,14 @@ export default function PasswordPage() {
 
         <input
           type="password"
+          placeholder="Enter the password"
           className="input-box"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
 
         <p style={{ color: "#b3b3b3", marginTop: "10px" }}>
-          Use at least 10 characters.
+          The password must contain at least 10 characters.
         </p>
 
         <button className="next-btn" onClick={handleNext}>Next</button>

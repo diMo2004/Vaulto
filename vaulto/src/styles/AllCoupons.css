@@ -1,0 +1,209 @@
+/* ===== All Coupons Page ===== */
+
+.all-coupons-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: radial-gradient(circle at top, #0f172a 0%, #020617 55%, #000 100%);
+  color: #e5e7eb;
+}
+
+/* Header */
+.all-coupons-header {
+  padding: 1.25rem 1.5rem 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.all-coupons-title-block {
+  display: flex;
+  flex-direction: column;
+}
+
+.all-coupons-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.all-coupons-subtitle {
+  font-size: 0.8rem;
+  opacity: 0.65;
+}
+
+/* back button */
+.all-back-btn {
+  border: none;
+  outline: none;
+  padding: 0.4rem 0.75rem;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  background: rgba(15, 23, 42, 0.8);
+  color: #e5e7eb;
+  cursor: pointer;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.6);
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.all-back-btn:hover {
+  background: rgba(30, 64, 175, 0.95);
+  transform: translateY(-1px);
+}
+
+/* Content area */
+.all-coupons-content {
+  flex: 1;
+  padding: 0 1.5rem 1rem;
+  overflow-y: auto;
+}
+
+/* Empty / loading states */
+.all-coupons-message {
+  margin-top: 1.5rem;
+  font-size: 0.9rem;
+  opacity: 0.7;
+}
+
+/* Coupon grid */
+.all-coupons-grid {
+  margin-top: 1rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 0.9rem;
+}
+
+/* Coupon card */
+.coupon-card {
+  position: relative;
+  padding: 0.9rem 1rem;
+  border-radius: 16px;
+  background: radial-gradient(circle at top left, #1f2937 0%, #020617 65%);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  box-shadow: 0 14px 30px rgba(15, 23, 42, 0.85);
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  overflow: hidden;
+  cursor: default;
+  transition: transform 0.14s ease, box-shadow 0.14s ease,
+    border-color 0.14s ease, background 0.14s ease;
+}
+
+.coupon-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at top, rgba(96, 165, 250, 0.14), transparent 55%);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.coupon-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.95);
+  border-color: rgba(129, 140, 248, 0.7);
+}
+
+.coupon-card:hover::before {
+  opacity: 1;
+}
+
+/* Card content */
+.coupon-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.coupon-store {
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.coupon-discount {
+  margin-top: 0.15rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #a5b4fc;
+}
+
+.coupon-meta-row {
+  margin-top: 0.35rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  font-size: 0.75rem;
+}
+
+/* badges */
+.coupon-tag,
+.coupon-expiry {
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  background: rgba(15, 23, 42, 0.75);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  white-space: nowrap;
+}
+
+.coupon-tag {
+  color: #e5e7eb;
+}
+
+.coupon-expiry {
+  color: #fbbf24;
+  border-color: rgba(251, 191, 36, 0.4);
+}
+
+.coupon-expiry.expired {
+  color: #f97373;
+  border-color: rgba(239, 68, 68, 0.6);
+}
+
+/* small dot */
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: #4ade80;
+}
+
+/* make sure bottom nav doesn’t overlap content */
+.all-coupons-page .bottom-nav-spacer {
+  height: 64px; /* match BottomNav height */
+}
+
+/* delete button on each coupon card */
+.coupon-delete-btn {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  border: none;
+  background: rgba(15, 23, 42, 0.85);
+  color: #9ca3af;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 2;
+  transition: background 0.15s ease, color 0.15s ease,
+    transform 0.1s ease;
+}
+
+.coupon-delete-btn:hover {
+  background: rgba(239, 68, 68, 0.95);
+  color: #f9fafb;
+  transform: translateY(-1px);
+}

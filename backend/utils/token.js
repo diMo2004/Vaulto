@@ -3,19 +3,15 @@ import dotenv from "dotenv";
 dotenv.config();
 
 export function signAccessToken(payload) {
-  const secret = process.env.JWT_ACCESS_SECRET;
-  const expiresIn = process.env.ACCESS_TOKEN_EXPIRES || "15m";
-  return jwt.sign(payload, secret, { expiresIn });
+  return jwt.sign(payload, process.env.JWT_ACCESS_SECRET, {
+    expiresIn: process.env.ACCESS_TOKEN_EXPIRES || "30m",
+  });
 }
 
 export function signRefreshToken(payload) {
-  const secret = process.env.JWT_REFRESH_SECRET;
-  const expiresIn = process.env.REFRESH_TOKEN_EXPIRES || "30d";
-  return jwt.sign(payload, secret, { expiresIn });
-}
-
-export function verifyAccessToken(token) {
-  return jwt.verify(token, process.env.JWT_ACCESS_SECRET);
+  return jwt.sign(payload, process.env.JWT_REFRESH_SECRET, {
+    expiresIn: process.env.REFRESH_TOKEN_EXPIRES || "30d",
+  });
 }
 
 export function verifyRefreshToken(token) {
