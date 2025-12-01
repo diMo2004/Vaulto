@@ -1,0 +1,527 @@
+:root{
+  --bg-dark: linear-gradient(180deg,#060027 0%, #0b1050 18%, #09206a 45%, #003f9a 75%, #007fe8 100%);
+  --bg-solid-dark: #07070a;
+  --text-light: #eaf6ff;
+  --text-muted-light: rgba(234,246,255,0.72);
+  --accent: #38bdf8;
+  --chip-border: rgba(255,255,255,0.12);
+  --chip-surface: rgba(255,255,255,0.02);
+  --glass: rgba(255,255,255,0.03);
+  --text-secondary: rgba(234,246,255,0.95);     
+  --text-muted: rgba(234,246,255,0.72);
+}
+
+html, body, #root {
+  min-height: 100%;
+  margin:0; 
+  padding:0;
+}
+
+/* basic reset */
+*{ box-sizing:border-box; margin:0; padding:0; }
+.app-container{ 
+  min-height:100vh; 
+  min-width:100%; 
+  position:relative; 
+  background:transparent; 
+  font-family: 
+  Inter,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; 
+  color:var(--text-light); 
+}
+
+/* dashboard-only hero: only appears when .dashboard-page is added to .app-container */
+.app-container.dashboard-page::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 365px; /* adjust if you like */
+  background: linear-gradient(180deg,#060027 0%, #0b1050 18%, #09206a 45%, #003f9a 75%, #007fe8 100%);
+  border-bottom-left-radius: 30px;
+  border-bottom-right-radius: 30px;
+  z-index: 0;
+  pointer-events: none;
+}
+
+
+/* header */
+.header{ padding:28px; display:flex; justify-content:space-between; align-items:flex-start; gap:12px; position:relative; z-index:1; }
+.profile-row{ display:flex; gap:12px; align-items:center; cursor:pointer; }
+.avatar{ width:56px; height:56px; border-radius:14px; background: var(--glass); display:flex; align-items:center; justify-content:center; border:1px solid rgba(255,255,255,0.04); margin-bottom: 10px;}
+.greetings h1{ font-size:26px; font-weight:800; margin-top:2px; color:white; }
+.greetings p{ font-size:13px; color:white; margin-top:6px; }
+
+/* small plus button */
+.icon-btn{ width:50px; height:50px; border-radius:12px; display:flex; align-items:center; justify-content:center; background: rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.05); cursor:pointer; z-index:2; }
+
+/* main content sits above gradient */
+.main-content{ padding:8px 28px 140px; position:relative; z-index:1; margin-top:12px; }
+
+/* section headers */
+.section-header{ display:flex; justify-content:space-between; align-items:center; margin:10px 0 14px; }
+.section-title{ font-size:25px; font-weight:800; color:var(--text-light);}
+.section{ font-size:30px; font-weight:800; color:var(--text-light); margin-bottom: 50px;}
+
+/* ----------------------
+   Coupon chips (carousel)
+   ---------------------- */
+
+/* we'll pull chips upward into the header so they visually sit inside the gradient */
+.coupon-scroll{
+  display:flex;
+  gap:20px;
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+  padding: 8px 16px 18px 16px;
+  margin: -56px -10px 32px -10px; /* negative top pulls chips into the gradient */
+  align-items:flex-end;
+  position:relative;
+  z-index:2;
+}
+
+/* chip card */
+.coupon-card{
+  min-width:120px;
+  width:120px;
+  padding:12px;
+  border-radius:18px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:8px;
+  text-align:center;
+  background: transparent;
+  border: 1px solid rgba(160, 12, 12, 0.04);
+  cursor:pointer;
+  transition: transform .16s cubic-bezier(.2,.9,.2,1), box-shadow .16s;
+  position:relative;
+  backface-visibility:hidden;
+  transform: translateZ(0);
+}
+
+/* the rounded icon box */
+.coupon-icon-box{
+  width:7px; 
+  height:76px;
+  border-radius:18px;
+  display:flex; align-items:center; justify-content:center;
+  background: var(--chip-surface);
+  border: 1px solid var(--chip-border);
+  box-shadow: inset 0 1px 0 rgba(159, 28, 28, 0.02), 0 8px 20px rgba(2,6,23,0.18);
+  color:var(--text-light);
+  transition: background .12s, transform .12s;
+}
+
+
+
+/* active chip */
+.coupon-card.active .coupon-icon-box{
+  background: rgba(35, 7, 7, 0.06);
+  border-color: rgba(255,255,255,0.14);
+  transform: translateY(-4px);
+}
+.coupon-card:hover { transform: translateY(-6px); box-shadow: 0 18px 36px rgba(2,6,23,0.28); }
+
+/* label */
+.coupon-name{ font-size:13px; font-weight:800; color:var(--text-light); margin-top:6px; }
+
+/* tiny inner rounded highlight (faint) */
+.coupon-icon-box::after{
+  content:'';
+  position:absolute;
+  width:62%; height:62%;
+  border-radius:12px;
+  background: rgba(255,255,255,0.02);
+  pointer-events:none;
+}
+
+/* ----------------------
+   Expiring cards
+   ---------------------- */
+.expiring-scroll{ display:flex; gap:18px; overflow-x:auto; padding:12px 12px 18px 12px; margin:6px -12px 26px -12px; z-index:1; position:relative; }
+.expiring-card{
+  min-width:220px; max-width:220px; height:120px;
+  border-radius:14px; padding:16px;
+  display:flex; flex-direction:column; justify-content:space-between;
+  backdrop-filter: blur(6px);
+  background: linear-gradient(180deg, rgba(14, 50, 109, 0.34), rgba(7,22,36,0.6));
+  border: 5px solid rgba(255,255,255,0.03);
+  color:var(--text-light);
+  box-shadow: 0 18px 40px rgba(0,0,0,0.45);
+}
+
+/* expiring top row */
+.expiring-top{ display:flex; justify-content:space-between; align-items:center; }
+.brand-icon-box{ color:var(--accent); display:flex; align-items:center; gap:8px; }
+.time-badge{ font-size:12px; font-weight:800; padding:6px 8px; border-radius:10px; background: rgba(255,255,255,0.06); color:var(--text-light); }
+
+/* typography inside card */
+.offer-text{ font-size:18px; font-weight:800; color:var(--text-light); }
+.brand-name-text{ font-size:13px; color: rgba(255,255,255,0.78); }
+
+/* ----------------------
+   Wallet cards
+   ---------------------- */
+.wallet-scroll{ display:flex; gap:18px; overflow-x:auto; padding:18px 12px 28px 12px; margin:10px -12px 30px -12px; align-items:flex-start; z-index:1; position:relative; }
+.card-item{ min-width:260px; height:160px; padding:18px; border-radius:14px; color:white; display:flex; flex-direction:column; justify-content:space-between; position:relative; overflow:hidden; box-shadow: 0 14px 40px rgba(0,0,0,0.45); border: 1px solid rgba(255,255,255,0.04); }
+.card-chip{ width:36px; height:22px; border-radius:6px; background: rgba(255,255,255,0.06); }
+.card-details h3{ font-size:18px; font-weight:800; color:rgba(255,255,255,0.96); margin-bottom:4px; }
+.card-details p{ font-size:13px; color:rgba(255,255,255,0.82); }
+.card-number{ font-family: ui-monospace,SFMono-Regular,Menlo,Monaco,monospace; font-size:15px; letter-spacing:1.4px; color:rgba(255,255,255,0.95); }
+.add-placeholder{ min-width:68px; height:160px; border-radius:14px; border:2px dashed rgba(255,255,255,0.06); display:flex; align-items:center; justify-content:center; color:rgba(255,255,255,0.85); background: rgba(255,255,255,0.02); }
+
+/* ----------------------
+   Social / FAQ / Nav
+   ---------------------- */
+.social-grid{ display:grid; grid-template-columns: repeat(2,1fr); gap:18px; margin-bottom:36px; z-index:1; position:relative; }
+.social-card{ background: linear-gradient(180deg, rgba(6, 66, 134, 0.36), rgba(8,18,30,0.6)); border-radius:14px; padding:18px; display:flex; gap:12px; align-items:center; min-height:96px; border:2px solid rgba(255,255,255,0.03); box-shadow: 0 14px 34px rgba(0,0,0,0.45); }
+.social-icon{ width:48px; height:48px; border-radius:12px; display:flex; align-items:center; justify-content:center; background: rgba(255,255,255,0.03); color:var(--text-light); }
+.social-text h3{ font-size:16px; font-weight:800; color:var(--text-light); }
+.social-text p{ font-size:13px; color:rgba(255,255,255,0.72); }
+
+/* faq & others */
+.faq-container{ margin-top:6px; padding-top:6px; }
+.faq-item{ padding:6px 0; }
+.faq-question{ display:flex; justify-content:space-between; align-items:center; cursor:pointer; font-weight:700; color:var(--text-light); padding:12px 0; }
+.faq-answer{ padding:8px 0 18px; color: rgba(255,255,255,0.78); line-height:1.6; }
+
+/* navbar bottom */
+.navbar{ position:fixed; bottom:0; left:0; right:0; height:65px; display:flex; justify-content:space-around; align-items:center; background: rgba(1,6,12,0.6); border-top:1px solid rgba(255,255,255,0.02); z-index:120; padding-bottom: env(safe-area-inset-bottom); box-shadow: 0 -12px 40px rgba(0,0,0,0.45); }
+.nav-link{ display:flex; flex-direction:column; align-items:center; gap:6px; color:var(--text-muted-light); cursor:pointer; font-weight:700; }
+.nav-link span{ font-size:11px; }
+.nav-link.active{ color:var(--accent); }
+.scan-action-btn{ width:62px; height:62px; border-radius:16px; display:flex; align-items:center; justify-content:center; margin-top:-30px; background:var(--accent); color:white; border:5px solid rgba(1,6,12,0.6); box-shadow:0 18px 40px rgba(56,189,248,0.14); }
+
+/* overlay / sidebar / action sheet */
+.overlay{ position:fixed !important; inset:0 !important; background: rgba(0,0,0,0.6); z-index:1000 !important; opacity:0; pointer-events:none; transition:opacity .18s ease;}
+.overlay.open{ opacity:1; pointer-events:auto; }
+.profile-sidebar{ position:fixed; top:0; left:0; width:280px; height:100%; transform: translateX(-110%); transition: transform .28s; z-index:1040; background: linear-gradient(180deg, rgba(6,12,22,0.95), rgba(8,12,20,0.98)); border-right:1px solid rgba(255,255,255,0.03); padding:30px; }
+.profile-sidebar.open{ transform: translateX(0); }
+.action-sheet{ position:fixed !important; bottom: 0 !important; left: 0 !important; right: 0 !important; z-index:10100 !important; transform: translateY(110%) !important; transition: transform .28s ease; background: linear-gradient(180deg, rgba(6,18,40,0.98), rgba(4,10,22,0.98)) !important; padding:22px !important; border-top-left-radius:18px !important; border: top right radius 18px !important;; }
+.action-sheet.open{ transform: translateY(0) !important; }
+.menu-item{ margin-top:20px; padding:16px 0; border-bottom:2px solid rgba(255,255,255,0.02); color:white; font-weight:700; cursor:pointer; text-decoration: none !important;}
+
+/* avoid subpixel hairlines/artifacts */
+.coupon-card, .coupon-icon-box, .expiring-card, .card-item {
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
+/* responsive */
+@media (max-width:900px){
+  .coupon-card{ min-width:96px; width:96px; padding:10px; border-radius:14px; }
+  .coupon-icon-box{ width:62px; height:62px; border-radius:14px; }
+  .coupon-scroll{ margin:-48px -8px 22px -8px; padding:8px 8px 16px 8px; }
+}
+@media (max-width:700px){
+  .coupon-card{ min-width:82px; width:82px; }
+  .coupon-icon-box{ width:52px; height:52px; border-radius:12px; }
+  .app-container::before{ height:260px; border-bottom-left-radius:22px; border-bottom-right-radius:22px; }
+}
+
+/* small spacing fix (keeps layout consistent) */
+.main-content{ padding-top:12px; margin-top:44px; }
+
+/* ===== Final coupon chips (visible, rounded, crisp) ===== */
+
+/* coupon-scroll container: overlap header and be horizontally scrollable */
+.coupon-scroll {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 12px 20px 20px 20px;
+  margin: -56px -12px 28px -12px;   /* chips sit inside header gradient */
+  align-items: flex-end;
+  position: relative;
+  z-index: 30;                       /* high so chips are always on top of header */
+  justify-content: flex-start;       /* left align (change to center below if desired) */
+}
+
+/* If you want the chips centered instead of left-aligned, replace the line above with:
+   justify-content: center;
+*/
+
+/* transparent chip with framed outline and full rounded corners */
+.coupon-card {
+  min-width: 120px;
+  width: 120px;
+  padding: 12px 8px;
+  border-radius: 18px;            /* rounded corners */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+  background: transparent;        /* keep chip transparent */
+  border: none;                   /* outline is drawn by pseudo-element */
+  position: relative;
+  z-index: 31;                    /* chip above scroll container */
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
+/* crisp frame using pseudo-element */
+.coupon-card::before {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.06); /* subtle outline (dark theme) */
+  background: rgba(2,6,23,0.00); /* fully transparent surface */
+  z-index: -1;
+}
+
+/* inner icon box — make it clearly visible and rounded */
+.coupon-icon-box {
+  width: 40px;
+  height: 45px;
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02)); /* subtle bright surface */
+  border: 1px solid rgba(255,255,255,0.06);
+  box-shadow: 0 10px 24px rgba(2,6,23,0.20);
+  color: var(--text-light);
+  position: relative;
+  z-index: 32;
+  transition: transform .12s, background .12s;
+}
+
+/* very faint inner highlight to match mock */
+.coupon-icon-box::after {
+  content: '';
+  position: absolute;
+  width: 60%;
+  height: 60%;
+  border-radius: 12px;
+  background: rgba(145, 16, 16, 0.01);
+  pointer-events: none;
+  z-index: 33;
+}
+
+/* chip label */
+.coupon-name {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--text-light);
+  margin-top: 4px;
+}
+
+/* active/hover states */
+.coupon-card.active::before {
+  border-color: rgba(255,255,255,0.16);
+  box-shadow: 0 14px 40px rgba(2,6,23,0.30);
+}
+.coupon-card.active .coupon-icon-box {
+  background: rgba(255,255,255,0.08);
+  transform: translateY(-6px);
+  border-color: rgba(255,255,255,0.14);
+}
+.coupon-card:hover { transform: translateY(-6px); transition: transform .14s ease; }
+
+/* responsive sizes */
+@media (max-width: 900px) {
+  .coupon-card { min-width: 96px; width: 96px; padding: 10px; border-radius: 14px; }
+  .coupon-icon-box { width: 62px; height: 62px; border-radius: 14px; }
+  .coupon-scroll { margin: -48px -8px 20px -8px; padding: 10px; }
+}
+@media (max-width: 700px) {
+  .coupon-card { min-width: 82px; width: 82px; }
+  .coupon-icon-box { width: 52px; height: 52px; border-radius: 12px; }
+  .coupon-card::before { inset: 1px; border-radius: 12px; }
+}
+
+
+/* 1) ensure nothing clips the chips — allow overflow where needed */
+.app-container, .header {
+  overflow: visible !important;
+}
+
+/* 3) lift coupon strip further into the hero and keep it above the hero */
+.coupon-scroll {
+  margin: -72px -12px 18px -12px !important;  /* <-- KEY: pull chips up. tweak ±8px to match exact look */
+  padding: 12px 14px 22px 14px !important;
+  z-index: 80 !important;                      /* make sure chips render above hero */
+  justify-content: flex-start;
+}
+
+/* 4) slightly bigger chip frames + crisper outline on phones */
+.coupon-card {
+  min-width: 92px !important;
+  width: 92px !important;
+  padding: 10px 6px !important;
+  border-radius: 16px !important;
+  background: transparent !important;
+  position: relative;
+}
+
+/* pseudo-frame: stronger for better contrast on phone */
+.coupon-card::before {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.09); /* stronger outline */
+  background: rgba(2,6,23,0.00);
+  z-index: -1;
+  box-shadow: 0 10px 30px rgba(2,6,23,0.28);
+}
+
+/* 5) inner icon box - corrected sizes and nicer elevation */
+.coupon-icon-box {
+  width: 56px !important;
+  height: 56px !important;
+  border-radius: 14px !important;
+  background: linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.02)) !important;
+  border: 1px solid rgba(255,255,255,0.08) !important;
+  box-shadow: 0 12px 30px rgba(2,6,23,0.30) !important;
+  transform-origin: center;
+}
+
+/* 6) active/hover state - lift more to match mock */
+.coupon-card.active .coupon-icon-box,
+.coupon-card:hover .coupon-icon-box {
+  transform: translateY(-6px) scale(1.02);
+  background: rgba(255,255,255,0.09);
+  border-color: rgba(255,255,255,0.16);
+}
+
+/* 7) ensure section title overlaps hero cleanly */
+.main-content { margin-top: -34px !important; padding: 6px 18px 140px; }
+.section { font-size: 26px; margin-bottom: 60px; margin-top: 45px; color:white ;}
+
+/* 8) reduce the gap under hero so the rounded corner looks like the reference */
+@media (max-width: 700px) {
+  .app-container::before { height: 365px !important; } /* if 360 is too tall on some phones, try 340 */
+  .coupon-scroll { margin: -68px -12px 16px -12px !important; }
+}
+
+/* 9) hide scrollbars cleanly */
+.no-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+.no-scroll::-webkit-scrollbar { display: none; }
+
+/* 10) ensure nav doesn't overlay content visually on smaller phones */
+.navbar { padding-bottom: env(safe-area-inset-bottom); }
+
+/* optional: tweak hero heading scale if text overlaps icons */
+@media (max-width: 420px) {
+  .greetings h1 { font-size: 28px !important; line-height: 1.02; }
+}
+
+
+.scan-text{
+  display: inline-block;
+  margin-left: 10px;
+  margin-bottom: 15px;
+  font-size: 19px;
+  color: white;
+}
+
+.action-option{
+  cursor: pointer;
+}
+
+.action-option {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  color: white;
+}
+
+/* make sure scan button is clickable */
+.scan-action-btn {
+  position: relative !important;
+  z-index: 10500 !important;
+  pointer-events: auto !important;
+  cursor: pointer !important;
+}
+.scan-action-btn > * { pointer-events: none !important; }
+
+/* Replace your old rules with these (put in src/styles/Sidebar.css or wherever you keep sidebar styles) */
+
+/* scope to the profile/sidebar so it doesn't affect other pages */
+.profile-sidebar .view,
+.sidebar .view,
+.profile .view,
+.profile-sidebar .view-profile,
+.sidebar .view-profile,
+.profile .view-profile {
+  display: inline-block;
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
+  cursor: pointer;
+  font-size: 16px !important;     /* fixed unit */
+  opacity: 0.78 !important;
+  margin-top: 4px !important;
+  margin-bottom: 40px !important;
+  padding: 0 !important;          /* remove huge padding-bottom that pushed layout */
+  color: rgba(255,255,255,0.9) !important;
+  background: transparent !important;
+  border: none !important;
+}
+
+/* stronger hover / focus so underline becomes clearer */
+.profile-sidebar .view:hover,
+.sidebar .view:hover,
+.profile .view:hover,
+.profile-sidebar .view:focus,
+.sidebar .view:focus {
+  opacity: 1 !important;
+  outline: none !important;
+  text-decoration-color: rgba(255,255,255,0.95) !important;
+}
+
+/* Replace your old rules with these (put in src/styles/Sidebar.css or wherever you keep sidebar styles) */
+
+/* scope to the profile/sidebar so it doesn't affect other pages */
+.profile-sidebar .view,
+.sidebar .view,
+.profile .view,
+.profile-sidebar .view-profile,
+.sidebar .view-profile,
+.profile .view-profile {
+  display: inline-block;
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
+  cursor: pointer;
+  font-size: 16px !important;     /* fixed unit */
+  opacity: 0.78 !important;
+  margin-top: 5px !important;
+  margin-bottom: 30px !important;
+  padding: 0 !important;          /* remove huge padding-bottom that pushed layout */
+  color: rgba(255,255,255,0.9) !important;
+  background: transparent !important;
+  border: none !important;
+}
+
+/* name styling — fixed units and valid font-weight */
+.profile-sidebar .name,
+.sidebar .name,
+.profile .name {
+  margin-top: 20px !important;
+  margin-bottom: 6px !important;
+  font-weight: 300 !important;   /* numeric; not px */
+  font-size: 20px !important;    /* px unit */
+  line-height: 1.1 !important;
+  color: #ffffff !important;
+}
+
+.menu-item{
+  margin-top:20px;
+  padding:16px 0;
+  border-bottom:2px solid rgba(255,255,255,0.02);
+  color:white;
+  gap: 10px !important;
+  font-weight:700;
+  cursor:pointer;
+  text-decoration: none !important;
+}
