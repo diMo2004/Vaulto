@@ -110,6 +110,8 @@ TWILIO_AUTH_TOKEN=your_twilio_auth_token
 TWILIO_FROM_NUMBER=+1XXXXXXXXXX
 ```
 
+> `ACCESS_TOKEN_EXPIRES` and `REFRESH_TOKEN_EXPIRES` follow the `jsonwebtoken` duration format (examples: `15m`, `1h`, `7d`, `30d`).
+
 Run backend:
 ```bash
 npm run dev
@@ -239,4 +241,5 @@ git pull origin full-app
 ---
 
 ## 📄 License
-No `LICENSE` file is currently present in the repository. Until a license is added, usage and redistribution are not explicitly granted by this project.
+No `LICENSE` file is currently present in the repository. Until one is added, usage and redistribution are not explicitly granted (effectively all rights reserved).  
+Recommended next step: add a standard license file such as `MIT` or `Apache-2.0`.
