@@ -93,7 +93,7 @@ PORT=8080
 MONGO_URI=mongodb://localhost:27017/coupons_auth
 JWT_ACCESS_SECRET=REPLACE_WITH_RANDOM_SECRET
 JWT_REFRESH_SECRET=REPLACE_WITH_RANDOM_SECRET
-# jsonwebtoken duration format examples: 15m, 1h, 7d, 30d
+# JWT duration format examples: 15m, 1h, 7d, 30d
 ACCESS_TOKEN_EXPIRES=15m
 REFRESH_TOKEN_EXPIRES=30d
 GOOGLE_CLIENT_ID=your_google_client_id
@@ -134,6 +134,7 @@ Frontend default URL (Vite): `http://localhost:5173`
 3. Vaulto extracts metadata via OCR and stores coupons.
 4. Browse dashboard/search to find relevant deals.
 5. Mark coupons tradable, gift to other users, and monitor expiring coupons.
+6. Accessibility fallback: use manual coupon entry whenever OCR/QR workflows are not suitable.
 
 ---
 
@@ -201,7 +202,7 @@ Frontend default URL (Vite): `http://localhost:5173`
 - `expiry`
 - `rawText`, `image`
 - `usageCount`, `lastUsedAt`
-- gifting/trading fields where enabled (`isTradable`, `tradeNotes`, `giftedFrom`, `giftedTo`, `isGifted`)
+- gifting/trading fields (always in schema, populated when used): `isTradable`, `tradeNotes`, `giftedFrom`, `giftedTo`, `isGifted`
 - `createdAt`, `updatedAt`
 
 ---
