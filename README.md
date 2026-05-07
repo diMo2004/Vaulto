@@ -29,10 +29,10 @@ Vaulto is designed to solve common coupon pain points:
 
 ### Frontend
 - **React**
-- **Vite** (full-app target frontend)
+- **Vite** (frontend build tool/dev server on the `full-app` branch)
 - **Tailwind CSS** (styling approach for full-app UI)
 - **Lucide React** (icons)
-- Tesseract.js (OCR)
+- **Tesseract.js** (OCR)
 
 ### Backend
 - **Node.js**
@@ -119,10 +119,10 @@ npm run dev
 ```bash
 cd ../vaulto
 npm install
-npm start
+npm run dev
 ```
 
-Frontend default URL: `http://localhost:3000`
+Frontend default URL: `http://localhost:3000` (or Vite default `http://localhost:5173`, depending on frontend branch setup)
 
 ---
 
@@ -199,7 +199,7 @@ Frontend default URL: `http://localhost:3000`
 - `expiry`
 - `rawText`, `image`
 - `usageCount`, `lastUsedAt`
-- gifting/trading fields where enabled
+- gifting/trading fields where enabled (`isTradable`, `tradeNotes`, `giftedFrom`, `giftedTo`, `isGifted`)
 - `createdAt`, `updatedAt`
 
 ---
