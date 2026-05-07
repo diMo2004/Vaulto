@@ -44,7 +44,7 @@ Vaulto is designed to solve common coupon pain points:
 - **Google OAuth 2.0** (`passport-google-oauth20`)
 - **Phone OTP with Twilio SMS flow**
 - **bcrypt password hashing**
-- HttpOnly auth cookies
+- 🔒 HttpOnly auth cookies
 
 ---
 
@@ -93,6 +93,7 @@ PORT=8080
 MONGO_URI=mongodb://localhost:27017/coupons_auth
 JWT_ACCESS_SECRET=change_this_access_secret
 JWT_REFRESH_SECRET=change_this_refresh_secret
+# jsonwebtoken duration format examples: 15m, 1h, 7d, 30d
 ACCESS_TOKEN_EXPIRES=15m
 REFRESH_TOKEN_EXPIRES=30d
 GOOGLE_CLIENT_ID=your_google_client_id
@@ -110,8 +111,6 @@ TWILIO_AUTH_TOKEN=your_twilio_auth_token
 TWILIO_FROM_NUMBER=+1XXXXXXXXXX
 ```
 
-> `ACCESS_TOKEN_EXPIRES` and `REFRESH_TOKEN_EXPIRES` follow the `jsonwebtoken` duration format (examples: `15m`, `1h`, `7d`, `30d`).
-
 Run backend:
 ```bash
 npm run dev
@@ -124,7 +123,7 @@ npm install
 npm run dev
 ```
 
-Frontend default URL: `http://localhost:3000` (or Vite default `http://localhost:5173`, depending on frontend branch setup)
+Frontend default URL (Vite): `http://localhost:5173`
 
 ---
 
