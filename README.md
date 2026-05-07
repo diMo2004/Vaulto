@@ -91,18 +91,19 @@ cp .env.example .env
 ```env
 PORT=8080
 MONGO_URI=mongodb://localhost:27017/coupons_auth
-JWT_ACCESS_SECRET=change_this_access_secret
-JWT_REFRESH_SECRET=change_this_refresh_secret
+JWT_ACCESS_SECRET=REPLACE_WITH_RANDOM_SECRET
+JWT_REFRESH_SECRET=REPLACE_WITH_RANDOM_SECRET
 # jsonwebtoken duration format examples: 15m, 1h, 7d, 30d
 ACCESS_TOKEN_EXPIRES=15m
 REFRESH_TOKEN_EXPIRES=30d
 GOOGLE_CLIENT_ID=your_google_client_id
 GOOGLE_CLIENT_SECRET=your_google_client_secret
+# Dev-only localhost callbacks/redirects; replace with production URLs in deployment
 GOOGLE_CALLBACK_URL=http://localhost:8080/auth/google/callback
 GOOGLE_SUCCESS_REDIRECT=http://localhost:5173/dashboard
 GOOGLE_FAILURE_REDIRECT=http://localhost:5173
 COOKIE_DOMAIN=localhost
-SESSION_SECRET=change_session_secret
+SESSION_SECRET=REPLACE_WITH_RANDOM_SECRET
 NODE_ENV=development
 
 # Phone OTP (Twilio)
