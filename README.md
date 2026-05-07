@@ -74,13 +74,13 @@ Vaulto/
 
 ## ⚙️ Setup & Installation
 
-## 1) Clone repository
+### 1) Clone repository
 ```bash
 git clone https://github.com/diMo2004/Vaulto.git
 cd Vaulto
 ```
 
-## 2) Backend setup
+### 2) Backend setup
 ```bash
 cd backend
 npm install
@@ -115,7 +115,7 @@ Run backend:
 npm run dev
 ```
 
-## 3) Frontend setup
+### 3) Frontend setup
 ```bash
 cd ../vaulto
 npm install
@@ -239,4 +239,4 @@ git pull origin full-app
 ---
 
 ## 📄 License
-This project is currently distributed without an explicit license file in the repository. Add a `LICENSE` file (for example MIT) to define usage terms clearly.
+No `LICENSE` file is currently present in the repository. Until a license is added, usage and redistribution are not explicitly granted by this project.
