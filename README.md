@@ -99,8 +99,8 @@ REFRESH_TOKEN_EXPIRES=30d
 GOOGLE_CLIENT_ID=your_google_client_id
 GOOGLE_CLIENT_SECRET=your_google_client_secret
 GOOGLE_CALLBACK_URL=http://localhost:8080/auth/google/callback
-GOOGLE_SUCCESS_REDIRECT=http://localhost:3000/dashboard
-GOOGLE_FAILURE_REDIRECT=http://localhost:3000
+GOOGLE_SUCCESS_REDIRECT=http://localhost:5173/dashboard
+GOOGLE_FAILURE_REDIRECT=http://localhost:5173
 COOKIE_DOMAIN=localhost
 SESSION_SECRET=change_session_secret
 NODE_ENV=development
@@ -240,5 +240,5 @@ git pull origin full-app
 ---
 
 ## 📄 License
-No `LICENSE` file is currently present in the repository. Until one is added, usage and redistribution are not explicitly granted (effectively all rights reserved).  
+No `LICENSE` file is currently present in the repository at this time. Until one is added, usage and redistribution are not explicitly granted (effectively all rights reserved).  
 Recommended next step: add a standard license file such as `MIT` or `Apache-2.0`.
