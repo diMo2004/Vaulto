@@ -93,7 +93,7 @@ PORT=8080
 MONGO_URI=mongodb://localhost:27017/coupons_auth
 JWT_ACCESS_SECRET=REPLACE_WITH_RANDOM_SECRET
 JWT_REFRESH_SECRET=REPLACE_WITH_RANDOM_SECRET
-# JWT duration format examples: 15m, 1h, 7d, 30d
+# JWT duration format examples compatible with common JWT libraries (for example jsonwebtoken): 15m, 1h, 7d, 30d
 ACCESS_TOKEN_EXPIRES=15m
 REFRESH_TOKEN_EXPIRES=30d
 GOOGLE_CLIENT_ID=your_google_client_id
@@ -202,7 +202,7 @@ Frontend default URL (Vite): `http://localhost:5173`
 - `expiry`
 - `rawText`, `image`
 - `usageCount`, `lastUsedAt`
-- gifting/trading fields (always in schema, populated when used): `isTradable`, `tradeNotes`, `giftedFrom`, `giftedTo`, `isGifted`
+- gifting/trading fields (optional and populated during gifting/trading operations): `isTradable`, `tradeNotes`, `giftedFrom`, `giftedTo`, `isGifted`
 - `createdAt`, `updatedAt`
 
 ---
