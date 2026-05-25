@@ -5,12 +5,13 @@ import PhoneIcon from "../assets/phone-icon.svg";
 import GoogleIcon from "../assets/google.svg";
 import LogoIcon from "../assets/logo-icon.svg";
 import "../styles/Signup.css";
+import { API_BASE } from "../config/api";
 
 export default function SignupLanding() {
   const navigate = useNavigate();
   const handleGoogleLogin = () => {
     // Implement Google OAuth flow here
-    window.location.href = "http://localhost:8080/auth/google";
+    window.location.href = `${API_BASE}/auth/google`;
   }
 
   return (

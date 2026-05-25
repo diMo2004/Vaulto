@@ -1,6 +1,7 @@
 // src/pages/AllCoupons.jsx
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { API_BASE } from "../config/api";
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
@@ -36,7 +37,7 @@ export default function AllCoupons() {
       try {
         setLoading(true);
 
-        const res = await fetch("http://localhost:8080/coupons/all", {
+        const res = await fetch(`${API_BASE}/coupons/all`, {
           credentials: "include", // send cookies / auth
         });
 

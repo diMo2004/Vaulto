@@ -1,6 +1,6 @@
 # Vaulto – Smart Coupon Wallet 🎟️
 
-Vaulto is a coupons-wallet application that helps users digitize, organize, and use coupons smarter. It combines OCR-powered coupon capture, personalized recommendations, and secure multi-method authentication.
+Vaulto is a coupons-wallet application that helps users digitize, organize, and use coupons smarter. It combines OCR-powered coupon capture, personalized recommendations, secure multi-method authentication, and a fully robust Java backend.
 
 ## Project Purpose
 Vaulto is designed to solve common coupon pain points:
@@ -28,23 +28,24 @@ Vaulto is designed to solve common coupon pain points:
 ## 🧰 Technology Stack
 
 ### Frontend
-- **React**
-- **Vite** (frontend build tool/dev server on the `full-app` branch)
-- **Tailwind CSS** (styling approach for full-app UI)
+- **React (Create React App)**
+- **Tailwind CSS** (styling approach for responsive UI)
 - **Lucide React** (icons)
 - **Tesseract.js** (OCR)
 
 ### Backend
-- **Node.js**
-- **Express.js**
-- **MongoDB + Mongoose**
+- **Java 17**
+- **Spring Boot 3**
+- **Spring Data MongoDB**
+- **Spring Security (OAuth2 Client & JWT)**
+- **Twilio SDK** (SMS integration)
+- **Maven** (build automation)
 
 ### Authentication & Security
-- **JWT access + refresh tokens**
-- **Google OAuth 2.0** (`passport-google-oauth20`)
+- **JWT access + refresh tokens** (HMAC-SHA256 signature, 256-bit+ secure keys)
+- **Google OAuth 2.0** integrated via Spring Security OAuth2 Client
 - **Phone OTP with Twilio SMS flow**
-- **bcrypt password hashing**
-- 🔒 HttpOnly auth cookies
+- **HttpOnly auth cookies** for secure token storage
 
 ---
 
@@ -53,20 +54,27 @@ Vaulto is designed to solve common coupon pain points:
 ```text
 Vaulto/
 ├── backend/
-│   ├── config/           # Passport/OAuth config
-│   ├── middleware/       # JWT auth middleware
-│   ├── models/           # User, Coupon schemas
-│   ├── routes/           # auth and coupon APIs
-│   ├── utils/            # token helpers
-│   ├── .env.example
-│   └── server.js
-├── vaulto/               # Frontend app
+│   ├── src/main/java/com/vaulto/
+│   │   ├── config/           # CORS & general beans
+│   │   ├── controllers/      # Auth, Coupon REST API endpoints
+│   │   ├── models/           # User, Coupon MongoDB documents
+│   │   ├── repositories/     # Spring Data MongoRepositories
+│   │   ├── security/         # SecurityConfig, JWT filters, Google OAuthSuccessHandler
+│   │   ├── services/         # User, Coupon, & Twilio SMS business logic
+│   │   └── VaultoApplication.java # Spring Boot main class (reads .env dynamically)
+│   ├── src/main/resources/
+│   │   └── application.properties # Default configurations & fallback settings
+│   ├── .env                  # Environment credentials
+│   ├── pom.xml               # Maven configuration
+│   └── mvnw / mvnw.cmd       # Maven wrappers
+├── vaulto/                   # Frontend app (React CRA)
 │   ├── public/
 │   └── src/
-│       ├── components/
-│       ├── context/
-│       ├── styles/
-│       └── App.js
+│       ├── components/       # UI Components
+│       ├── config/           # Dynamic API Base config
+│       ├── context/          # Global Contexts
+│       ├── styles/           # CSS Layouts
+│       └── App.jsx           # Main routing & app entrance
 └── README.md
 ```
 
@@ -81,30 +89,35 @@ cd Vaulto
 ```
 
 ### 2) Backend setup
-```bash
-cd backend
-npm install
-cp .env.example .env
-```
+1. Navigate to the backend directory:
+   ```bash
+   cd backend
+   ```
+2. Create your `.env` file from the template:
+   ```bash
+   cp .env.example .env
+   ```
+3. Update your `.env` variables with your active credentials (see below).
 
-### Backend `.env` configuration
+#### Backend `.env` configuration
 ```env
 PORT=8080
 MONGO_URI=mongodb://localhost:27017/coupons_auth
-JWT_ACCESS_SECRET=REPLACE_WITH_RANDOM_SECRET
-JWT_REFRESH_SECRET=REPLACE_WITH_RANDOM_SECRET
-# JWT duration format examples compatible with common JWT libraries (for example jsonwebtoken): 15m, 1h, 7d, 30d
-ACCESS_TOKEN_EXPIRES=15m
+
+# JWT keys must be at least 256 bits (32+ characters) long!
+JWT_ACCESS_SECRET=your_super_secure_access_secret_key_32_chars_or_more
+JWT_REFRESH_SECRET=your_super_secure_refresh_secret_key_32_chars_or_more
+ACCESS_TOKEN_EXPIRES=30m
 REFRESH_TOKEN_EXPIRES=30d
-GOOGLE_CLIENT_ID=your_google_client_id
+
+# Google OAuth
+GOOGLE_CLIENT_ID=your_google_client_id.apps.googleusercontent.com
 GOOGLE_CLIENT_SECRET=your_google_client_secret
-# Dev-only localhost callbacks/redirects; replace with production URLs in deployment
-GOOGLE_CALLBACK_URL=http://localhost:8080/auth/google/callback
-GOOGLE_SUCCESS_REDIRECT=http://localhost:5173/dashboard
-GOOGLE_FAILURE_REDIRECT=http://localhost:5173
+GOOGLE_SUCCESS_REDIRECT=http://localhost:3000/dashboard
+
 COOKIE_DOMAIN=localhost
-SESSION_SECRET=REPLACE_WITH_RANDOM_SECRET
 NODE_ENV=development
+SESSION_SECRET=your_session_secret
 
 # Phone OTP (Twilio)
 TWILIO_ACCOUNT_SID=your_twilio_account_sid
@@ -112,19 +125,57 @@ TWILIO_AUTH_TOKEN=your_twilio_auth_token
 TWILIO_FROM_NUMBER=+1XXXXXXXXXX
 ```
 
-Run backend:
-```bash
-npm run dev
-```
+4. Run the Spring Boot backend:
+   * **Windows**:
+     ```powershell
+     ./mvnw spring-boot:run
+     ```
+   * **macOS/Linux**:
+     ```bash
+     chmod +x mvnw
+     ./mvnw spring-boot:run
+     ```
+
+---
 
 ### 3) Frontend setup
-```bash
-cd ../vaulto
-npm install
-npm run dev
-```
+1. Navigate to the frontend directory:
+   ```bash
+   cd ../vaulto
+   ```
+2. Install npm packages:
+   ```bash
+   npm install
+   ```
+3. Run the development server:
+   ```bash
+   npm run dev
+   ```
 
-Frontend default URL (Vite): `http://localhost:5173`
+* Frontend default URL: `http://localhost:3000`
+
+---
+
+## ☁️ AWS Deployment (Free Tier)
+
+Vaulto includes an automated PowerShell script to quickly provision and deploy the application to the AWS Free Tier.
+
+### What it does:
+1. **Backend**: Packages the Java app and deploys it to **AWS Elastic Beanstalk** (Java 17, `t2.micro` free tier).
+2. **Frontend**: Builds the React production bundle and deploys it to an **AWS S3 Static Website Bucket**.
+
+### Deployment Steps:
+1. Ensure the **AWS CLI** is installed on your machine.
+2. Authenticate the CLI using your IAM user credentials:
+   ```bash
+   aws configure
+   ```
+3. Open a fresh PowerShell window (to ensure AWS CLI is in your PATH).
+4. Run the automated deployment script from the project root:
+   ```powershell
+   .\deploy_aws.ps1
+   ```
+5. Follow the post-deployment instructions printed by the script (e.g., adding Environment Variables via the Elastic Beanstalk console and updating Google OAuth Authorized URLs).
 
 ---
 
@@ -143,12 +194,11 @@ Frontend default URL (Vite): `http://localhost:5173`
 ### 1) Local (Email + Password)
 - Register: `POST /auth/register`
 - Login: `POST /auth/login`
-- Passwords hashed using `bcrypt`
+- Passwords securely hashed server-side
 
 ### 2) Google OAuth
-- Start: `GET /auth/google`
-- Callback: `GET /auth/google/callback`
-- Managed through Passport strategy and secure cookies
+- Start: redirect browser to `http://localhost:8080/oauth2/authorization/google`
+- Managed through Spring Security OAuth2 Client and secure cookies
 
 ### 3) Phone OTP (Twilio)
 - Start OTP: `POST /auth/phone/start`
@@ -162,8 +212,6 @@ Frontend default URL (Vite): `http://localhost:5173`
 ### Auth & User
 - `POST /auth/register`
 - `POST /auth/login`
-- `GET /auth/google`
-- `GET /auth/google/callback`
 - `POST /auth/phone/start`
 - `POST /auth/phone/verify`
 - `POST /auth/refresh-token`
@@ -178,41 +226,16 @@ Frontend default URL (Vite): `http://localhost:5173`
 - `GET /coupons/tradeable`
 - `POST /coupons/gift`
 - `POST /coupons/:id/tradable`
-- `GET /coupons/expiring-soon?days=3&prioritize=true`
+- `GET /coupons/expiring-soon?days=5`
 - `DELETE /coupons/:id`
-
----
-
-## 🗄️ Database Schema Overview
-
-### User Model
-- `provider` (`local | google | phone`)
-- `email`, `password`
-- `phone`
-- `googleId`, `avatar`
-- `name`, `username`, `dob`, `gender`
-- `refreshToken`
-- `categoryUsage` (Map for preference signals)
-- `preferenceCluster`
-- `createdAt`, `updatedAt`
-
-### Coupon Model
-- `owner` (User reference)
-- `store`, `code`, `discount`, `category`
-- `expiry`
-- `rawText`, `image`
-- `usageCount`, `lastUsedAt`
-- gifting/trading fields (optional and populated during gifting/trading operations): `isTradable`, `tradeNotes`, `giftedFrom`, `giftedTo`, `isGifted`
-- `createdAt`, `updatedAt`
 
 ---
 
 ## 🛡️ Security Features
 - JWT-based auth with short-lived access and long-lived refresh token strategy
-- HttpOnly cookie storage for auth tokens
-- OAuth flow via Passport for Google identity federation
-- Twilio SMS OTP verification for phone login
-- Password hashing with bcrypt salt rounds
+- HttpOnly cookie storage for secure JWT storage (prevents XSS attacks)
+- Seamless Google OAuth federation via Spring Security
+- Secure Twilio SMS OTP verification for multi-factor login
 
 ---
 

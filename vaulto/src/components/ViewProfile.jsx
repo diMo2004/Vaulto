@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "../styles/ViewProfile.css";
 import {
+import { API_BASE } from "../config/api";
   User,
   Settings,
   LogOut,
@@ -40,7 +41,7 @@ export default function ViewProfile() {
   useEffect(() => {
     async function fetchProfile() {
       try {
-        const res = await fetch("http://localhost:8080/auth/me", {
+        const res = await fetch(`${API_BASE}/auth/me`, {
           credentials: "include",
         });
 
@@ -89,7 +90,7 @@ export default function ViewProfile() {
 
     try {
       if (backendKeys.includes(editingItem.key)) {
-        const res = await fetch("http://localhost:8080/auth/me", {
+        const res = await fetch(`${API_BASE}/auth/me`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",

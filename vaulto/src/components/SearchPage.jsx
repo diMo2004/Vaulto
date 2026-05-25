@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "../styles/SearchPage.css";
+import { API_BASE } from "../config/api";
 
 export default function SearchPage() {
   const [query, setQuery] = useState("");
@@ -8,7 +9,7 @@ export default function SearchPage() {
   
   useEffect(() => {
     // Fetch coupons from backend
-    fetch("http://localhost:8080/coupons/all")
+    fetch(`${API_BASE}/coupons/all`)
       .then(res => res.json())
       .then(data => setAllCoupons(data))
       .catch(err => console.error(err));

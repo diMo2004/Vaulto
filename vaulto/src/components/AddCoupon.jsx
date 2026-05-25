@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import "../styles/AddCoupon.css";
 import BottomNav from "./BottomNav";
+import { API_BASE } from "../config/api";
 
 export default function AddCoupon() {
   const navigate = useNavigate();
@@ -34,7 +35,7 @@ export default function AddCoupon() {
         localStorage.getItem("accessToken") ||
         null;
 
-      const res = await fetch("http://localhost:8080/coupons/add", {
+      const res = await fetch(`${API_BASE}/coupons/add`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

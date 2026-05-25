@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import BottomNav from "./BottomNav";
 import "../styles/AddCoupon.css"; // reuse form styling
+import { API_BASE } from "../config/api";
 
 export default function GiftPage() {
   const [coupons, setCoupons] = useState([]);
@@ -10,7 +11,7 @@ export default function GiftPage() {
   useEffect(() => {
     async function loadCoupons() {
       try {
-        const res = await fetch("http://localhost:8080/coupons/all", {
+        const res = await fetch(`${API_BASE}/coupons/all`, {
           credentials: "include"
         });
         const data = await res.json();
@@ -29,7 +30,7 @@ export default function GiftPage() {
       return;
     }
 
-    const res = await fetch("http://localhost:8080/coupons/gift", {
+    const res = await fetch(`${API_BASE}/coupons/gift`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",

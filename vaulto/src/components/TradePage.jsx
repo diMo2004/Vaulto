@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import BottomNav from "./BottomNav";
 import "../styles/AddCoupon.css";
 import { useNavigate } from "react-router-dom";
+import { API_BASE } from "../config/api";
 
 export default function TradePage() {
   // ✅ define loading state properly
@@ -14,7 +15,7 @@ export default function TradePage() {
       try {
         // ✅ use the backend route that you KNOW works
         // if you have /coupons/tradeable implemented, you can switch to that later
-        const res = await fetch("http://localhost:8080/coupons/all", {
+        const res = await fetch(`${API_BASE}/coupons/all`, {
           credentials: "include",          // send cookies / auth
         });
 

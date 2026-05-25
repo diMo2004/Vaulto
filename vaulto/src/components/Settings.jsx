@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/Settings.css";
 import BottomNav from "./BottomNav";
+import { API_BASE } from "../config/api";
 
 export default function Settings() {
   const navigate = useNavigate();
@@ -169,7 +170,7 @@ export default function Settings() {
             className="settings-logout"
             onClick={() => {
               // you already have a backend logout route; this just calls it then redirects
-              fetch("http://localhost:8080/auth/logout", {
+              fetch(`${API_BASE}/auth/logout`, {
                 method: "POST",
                 credentials: "include",
               }).finally(() => {

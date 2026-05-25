@@ -3,6 +3,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import "../App.css";
+import { API_BASE } from "../config/api";
 import "../styles/Dashboard.css";
 import {
   Home,
@@ -82,7 +83,7 @@ const Dashboard = () => {
   useEffect(() => {
     async function loadCoupons() {
       try {
-        const res = await fetch("http://localhost:8080/coupons/all", {
+        const res = await fetch(`${API_BASE}/coupons/all`, {
           credentials: "include",
         });
 
