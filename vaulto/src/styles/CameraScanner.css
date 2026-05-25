@@ -13,9 +13,13 @@
 }
 
 .scan-btn {
-    margin-top: 20px;
-    padding: 12px 25px;
-    background: linear-gradient(to right, #4cc9f0, #7209b7);
+    margin-top: 350px;
+    padding: 16px 28px;
+    background: linear-gradient(to right,
+  #4cc9f0 0%,
+  #4895ef 20%,
+  #4361ee 50%,
+  #7209b7 100%);
     border: none;
     color: white;
     font-size: 16px;

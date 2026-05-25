@@ -5,7 +5,7 @@ export default function SearchPage() {
   const [query, setQuery] = useState("");
   const [filteredCoupons, setFilteredCoupons] = useState([]);
   const [allCoupons, setAllCoupons] = useState([]);
-
+  
   useEffect(() => {
     // Fetch coupons from backend
     fetch("http://localhost:8080/coupons/all")
@@ -23,6 +23,8 @@ export default function SearchPage() {
       return;
     }
 
+    
+
     const results = allCoupons.filter(c =>
       c.store.toLowerCase().includes(value.toLowerCase()) ||
       c.code.toLowerCase().includes(value.toLowerCase()) ||
@@ -38,6 +40,9 @@ export default function SearchPage() {
       {/* Header */}
       <div className="search-header">
         <h2>Find your saved coupons</h2>
+
+         <div className="search-header-right">
+        </div>
 
         <div className="search-bar-container">
           <input
