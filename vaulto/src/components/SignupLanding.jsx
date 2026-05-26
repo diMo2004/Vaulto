@@ -11,7 +11,7 @@ export default function SignupLanding() {
   const navigate = useNavigate();
   const handleGoogleLogin = () => {
     // Implement Google OAuth flow here
-    window.location.href = `${API_BASE}/auth/google`;
+    window.location.href = `${API_BASE}/oauth2/authorization/google`;
   }
 
   return (

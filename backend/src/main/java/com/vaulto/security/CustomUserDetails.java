@@ -16,8 +16,6 @@ public class CustomUserDetails implements OAuth2User, UserDetails {
     private final String id;
     private final String email;
     private final String password;
-    private final String name;
-    private final String username;
     private final User user;
     private Map<String, Object> attributes;
 
@@ -25,8 +23,6 @@ public class CustomUserDetails implements OAuth2User, UserDetails {
         this.id = user.getId();
         this.email = user.getEmail();
         this.password = user.getPassword();
-        this.name = user.getName();
-        this.username = user.getUsername();
         this.user = user;
     }
 

@@ -5,7 +5,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.util.SerializationUtils;
 
 import java.util.Base64;
 import java.util.Optional;
@@ -58,10 +57,22 @@ public class CookieUtils {
     }
 
     public String serialize(Object object) {
-        return Base64.getUrlEncoder().encodeToString(SerializationUtils.serialize(object));
+        try (java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream();
+             java.io.ObjectOutputStream oos = new java.io.ObjectOutputStream(baos)) {
+            oos.writeObject(object);
+            return Base64.getUrlEncoder().encodeToString(baos.toByteArray());
+        } catch (java.io.IOException e) {
+            throw new RuntimeException("Failed to serialize object", e);
+        }
     }
 
     public <T> T deserialize(Cookie cookie, Class<T> cls) {
-        return cls.cast(SerializationUtils.deserialize(Base64.getUrlDecoder().decode(cookie.getValue())));
+        byte[] decodedBytes = Base64.getUrlDecoder().decode(cookie.getValue());
+        try (java.io.ByteArrayInputStream bais = new java.io.ByteArrayInputStream(decodedBytes);
+             java.io.ObjectInputStream ois = new java.io.ObjectInputStream(bais)) {
+            return cls.cast(ois.readObject());
+        } catch (java.io.IOException | ClassNotFoundException e) {
+            throw new RuntimeException("Failed to deserialize object", e);
+        }
     }
 }

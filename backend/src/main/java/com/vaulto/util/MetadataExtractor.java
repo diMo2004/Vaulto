@@ -88,4 +88,16 @@ public class MetadataExtractor {
 
         return "Others";
     }
+
+    public static com.vaulto.dto.CouponRequest extractCouponData(String text) {
+        com.vaulto.dto.CouponRequest request = new com.vaulto.dto.CouponRequest();
+        request.setStore(extractStore(text));
+        request.setCode(extractCouponCode(text));
+        request.setDiscount(extractDiscount(text));
+        request.setCategory(detectCategory(request.getStore(), text));
+        // Note: expiry parsing from string to date might need a formatter, 
+        // passing raw text back in description instead.
+        request.setRawText(text);
+        return request;
+    }
 }

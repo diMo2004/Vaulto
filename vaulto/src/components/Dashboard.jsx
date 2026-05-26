@@ -53,10 +53,38 @@ const Dashboard = () => {
     else setGreeting("Good evening");
   }, []);
 
-  // username from localStorage (for greeting)
+  // username from backend (for greeting)
   useEffect(() => {
-    const stored = localStorage.getItem("vaulto_username") || "";
-    setUsername(stored);
+    async function fetchUser() {
+      try {
+        const storedToken =
+          sessionStorage.getItem("accessToken") ||
+          localStorage.getItem("accessToken") ||
+          null;
+
+        const res = await fetch(`${API_BASE}/auth/me`, {
+          headers: {
+            ...(storedToken ? { Authorization: `Bearer ${storedToken}` } : {}),
+          },
+          credentials: "include",
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          const displayName = data.name || data.username || "user";
+          setUsername(displayName);
+          localStorage.setItem("vaulto_username", displayName);
+        } else {
+          // fallback to local storage if fetch fails
+          const stored = localStorage.getItem("vaulto_username") || "";
+          setUsername(stored);
+        }
+      } catch (err) {
+        const stored = localStorage.getItem("vaulto_username") || "";
+        setUsername(stored);
+      }
+    }
+    fetchUser();
   }, []);
 
   // listen for global add-menu toggle

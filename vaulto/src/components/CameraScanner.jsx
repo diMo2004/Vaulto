@@ -1,9 +1,20 @@
 import React, { useRef, useState } from "react";
 import Webcam from "react-webcam";
-import Tesseract from "tesseract.js";
-import { extractMetadata } from "../utils/metadataExtractor";
 import "../styles/CameraScanner.css";
 import { useNavigate } from "react-router-dom";
+
+import { API_BASE } from "../config/api";
+
+function dataURItoBlob(dataURI) {
+  const byteString = atob(dataURI.split(',')[1]);
+  const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+  const ab = new ArrayBuffer(byteString.length);
+  const ia = new Uint8Array(ab);
+  for (let i = 0; i < byteString.length; i++) {
+    ia[i] = byteString.charCodeAt(i);
+  }
+  return new Blob([ab], {type: mimeString});
+}
 
 export default function CameraScanner() {
   const navigate = useNavigate();
@@ -22,23 +33,43 @@ export default function CameraScanner() {
   };
 
   // OCR Processing
-  const processImage = async (image) => {
+  const processImage = async (imageSrc) => {
     setProcessing(true);
-    setTextResult("Extracting text…");
+    setTextResult("Extracting text via backend…");
 
-    const result = await Tesseract.recognize(image, "eng", {
-      logger: (m) => console.log(m),
-    });
+    try {
+      const blob = dataURItoBlob(imageSrc);
+      const formData = new FormData();
+      formData.append("image", blob, "webcam_capture.png");
 
-    const text = result.data.text;
-    setTextResult(text);
+      const storedToken =
+        sessionStorage.getItem("accessToken") ||
+        localStorage.getItem("accessToken") ||
+        null;
 
-    const extractedMetadata = extractMetadata(text);
-    setMetadata(extractedMetadata);
+      const res = await fetch(`${API_BASE}/coupons/ocr`, {
+        method: "POST",
+        headers: {
+          ...(storedToken ? { Authorization: `Bearer ${storedToken}` } : {}),
+        },
+        credentials: "include",
+        body: formData,
+      });
 
-    console.log("Extracted Metadata:", extractedMetadata);
-
-    setProcessing(false);
+      if (!res.ok) throw new Error("OCR Server Error");
+      
+      const data = await res.json();
+      
+      setTextResult(data.rawText || "");
+      setMetadata(data.metadata || null);
+      
+      console.log("Extracted Metadata:", data.metadata);
+    } catch (err) {
+      console.error(err);
+      setTextResult("OCR failed. Check if backend and Docker OCR microservice are running.");
+    } finally {
+      setProcessing(false);
+    }
   };
 
   return (

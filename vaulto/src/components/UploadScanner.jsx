@@ -1,8 +1,7 @@
 import React, { useRef, useState } from "react";
-import Tesseract from "tesseract.js";
-import { extractMetadata } from "../utils/metadataExtractor";
 import "../styles/UploadScanner.css";
 import { useNavigate } from "react-router-dom";
+import { API_BASE } from "../config/api";
 import BottomNav from "./BottomNav";
 
 export default function UploadScanner() {
@@ -23,7 +22,7 @@ export default function UploadScanner() {
     const reader = new FileReader();
     reader.onload = () => {
       setSelectedImage(reader.result);
-      runOcr(reader.result);
+      runOcr(file);
     };
     reader.onerror = () => setError("Failed to read file.");
     reader.readAsDataURL(file);
@@ -42,24 +41,41 @@ const handleFileUpload = (e) => {
 
   const onDragOver = (e) => e.preventDefault();
 
-  const runOcr = async (img) => {
+  const runOcr = async (file) => {
     setProcessing(true);
-    setProgress(0);
+    setProgress(50); // Simulate progress since backend call is synchronous-like
     setTextResult("");
     setMetadata(null);
     setError("");
+
     try {
-      const result = await Tesseract.recognize(img, "eng", {
-        logger: (m) => {
-          if (typeof m.progress === "number") setProgress(Number(m.progress));
+      const formData = new FormData();
+      formData.append("image", file);
+
+      const storedToken =
+        sessionStorage.getItem("accessToken") ||
+        localStorage.getItem("accessToken") ||
+        null;
+
+      const res = await fetch(`${API_BASE}/coupons/ocr`, {
+        method: "POST",
+        headers: {
+          ...(storedToken ? { Authorization: `Bearer ${storedToken}` } : {}),
         },
+        credentials: "include",
+        body: formData,
       });
-      const extractedText = result?.data?.text || "";
-      setTextResult(extractedText);
-      setMetadata(extractMetadata(extractedText || ""));
+
+      if (!res.ok) throw new Error("OCR Server Error");
+      
+      const data = await res.json();
+      setProgress(100);
+      
+      setTextResult(data.rawText || "");
+      setMetadata(data.metadata || null);
     } catch (err) {
       console.error(err);
-      setError("OCR failed. Try a clearer image or different file.");
+      setError("OCR failed. Check if backend and Docker OCR microservice are running.");
     } finally {
       setProcessing(false);
       setProgress(0);
