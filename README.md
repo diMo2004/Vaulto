@@ -267,3 +267,115 @@ git pull origin full-app
 ## 📄 License
 No `LICENSE` file is currently present in the repository at this time. Until one is added, usage and redistribution are not explicitly granted (effectively all rights reserved).  
 Recommended next step: add a standard license file such as `MIT` or `Apache-2.0`.
+
+---
+
+## 🧠 Hybrid Recommendation System
+
+### 1. Overview
+Vaulto features a Hybrid Recommendation System designed to provide highly personalized coupon suggestions. It works effectively from day one by employing a robust **cold-start strategy** using rule-based metrics, and evolves as user interactions increase to provide cluster-based similarity matches.
+
+### 2. Recommendation Architecture
+The recommendation engine consists of multiple layers:
+- **Rule-Based Layer**: Handles the cold-start problem by suggesting popular, trending, high-discount, and expiring-soon coupons.
+- **Embedding-Based Representation**: Converts coupon text/metadata into dense vector embeddings using `all-MiniLM-L6-v2`.
+- **K-Means Cluster-Based Layer**: Groups similar coupons into semantic clusters.
+- **User Interest Profiling**: Tracks user interactions (views, saves, claims) to dynamically adjust cluster affinities.
+- **Candidate Ranking**: Merges similarity and rule-based metrics into a weighted final score for ranking.
+- **Future Collaborative Filtering**: Modular design allowing future integration of matrix factorization or LightFM.
+
+### 3. Recommendation Flow Diagram
+```mermaid
+graph TD
+    A[User Actions] -->|view, save, claim| B[User Events]
+    B --> C[User Profile Update]
+    C --> D[Preferred Clusters]
+    E[Coupons + OCR Data] --> F[Coupon Text]
+    F -->|SentenceTransformer| G[Coupon Embeddings]
+    G --> H[K-Means Clustering]
+    D --> I[Candidate Generation]
+    H --> I
+    I --> J[Ranking Engine]
+    J --> K[Top K Recommendations]
+```
+
+### 4. Database Schema
+- **users**: Stores core user identity and authentication details.
+- **coupons**: Stores coupon metadata (`id`, `store`, `category`, `description`, `discount`, `tags`, `expiry`, `cluster_id`).
+- **user_events**: Tracks all interactions (`id`, `user_id`, `coupon_id`, `event_type`, `timestamp`).
+- **user_profiles**: Maintains personalized weights (`user_id`, `cluster_weights`, `preferred_categories`).
+
+### 5. API Documentation
+
+#### `GET /recommendations/{user_id}`
+Returns a ranked list of top `K` recommended coupons for the user.
+- **Parameters**: `top_k` (query, default 10)
+- **Response**:
+```json
+{
+  "user_id": 1,
+  "recommendations": [
+    { "id": 101, "store": "Amazon", "discount": 30.0, "cluster_id": 2 }
+  ]
+}
+```
+
+#### `POST /events`
+Tracks a user interaction.
+- **Body**: `{ "user_id": 1, "coupon_id": 101, "event_type": "save" }`
+- **Response**: `{ "message": "Event tracked successfully" }`
+
+#### `POST /coupons`
+Adds a new coupon, generates its embedding, and assigns it to a cluster.
+- **Body**: `{ "store": "BestBuy", "category": "Electronics", "description": "Laptops on sale", "discount": 20.0, "tags": "laptop,tech" }`
+- **Response**: `{ "message": "Coupon created", "id": 102, "cluster_id": 1 }`
+
+#### `POST /retrain-clusters`
+Triggers background K-Means retraining across all coupon embeddings.
+- **Response**: `{ "message": "Cluster retraining started in background" }`
+
+#### `POST /update-user-profile`
+Manually updates user preferred categories.
+- **Body**: `{ "user_id": 1, "categories": ["Electronics", "Food"] }`
+- **Response**: `{ "message": "User profile updated" }`
+
+### 6. Embedding Pipeline
+- **Coupon text generation**: Concatenates store, category, discount, description, tags, and expiry into a unified text block.
+- **Model**: `all-MiniLM-L6-v2` via `SentenceTransformer`.
+- **Process**: The unified text is encoded into dense float vectors.
+- **Storage & Search**: Vectors are stored in **Qdrant**, enabling high-performance cosine similarity searches.
+
+### 7. Cluster Training
+- **K-Means training**: Unsupervised clustering algorithm groups the Qdrant vectors.
+- **Cluster assignment**: New coupons are instantly assigned to the nearest centroid.
+- **Periodic retraining**: A background job runs daily to readjust clusters as the coupon dataset grows.
+
+### 8. Recommendation Formula
+The final ranking is determined by a weighted score:
+```
+final_score = 
+  0.35 * cluster_affinity +
+  0.25 * embedding_similarity +
+  0.15 * popularity +
+  0.15 * discount +
+  0.10 * expiry_urgency
+```
+- **cluster_affinity**: How much the user interacts with this coupon's cluster.
+- **embedding_similarity**: Cosine similarity to the user's vector representation.
+- **popularity**: Global interaction volume.
+- **discount**: Normalized discount percentage.
+- **expiry_urgency**: Score boosting coupons expiring within the next 3 days.
+
+### 9. Background Jobs
+Managed via **APScheduler**:
+- **Embedding generation worker**: Runs asynchronously when a new coupon is created.
+- **Cluster retraining worker**: Periodically (e.g., every 24h) refits the K-Means model.
+- **User profile update worker**: Periodically syncs heavy interaction logs into aggregated profile weights.
+- **Trending coupon calculation worker**: Pre-calculates global popularity metrics.
+
+### 10. Future Roadmap
+- Integration of **Collaborative Filtering** models.
+- **Matrix Factorization** for user-item interaction sparse matrices.
+- Implementing **LightFM** for hybrid representation incorporating both content and interactions.
+- Exploring **Neural Collaborative Filtering** to capture complex, non-linear user-coupon relationships.
+

@@ -1,0 +1,14 @@
+fastapi==0.109.2
+uvicorn[standard]==0.27.1
+pydantic==2.6.1
+pydantic-settings==2.1.0
+SQLAlchemy==2.0.25
+asyncpg==0.29.0
+alembic==1.13.1
+qdrant-client==1.7.3
+sentence-transformers==2.3.1
+scikit-learn==1.4.0
+pandas==2.2.0
+numpy==1.26.4
+APScheduler==3.10.4
+python-dotenv==1.0.1
