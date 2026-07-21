@@ -59,13 +59,19 @@ export default function PhoneOTP() {
         <p>
           Didn’t receive code?
           <br />
-          <a href="#">Resend code</a>
+          <button type="button" className="text-link">
+            Resend code
+          </button>
         </p>
 
         <p>
-          <a href="#" onClick={() => navigate("/login/phone")}>
+          <button
+            type="button"
+            className="text-link"
+            onClick={() => navigate("/login/phone")}
+          >
             Edit phone number
-          </a>
+          </button>
         </p>
       </div>
     </div>

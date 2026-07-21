@@ -2,7 +2,6 @@ import React, { useRef, useState } from "react";
 import "../styles/UploadScanner.css";
 import { useNavigate } from "react-router-dom";
 import { API_BASE } from "../config/api";
-import BottomNav from "./BottomNav";
 
 export default function UploadScanner() {
   const [selectedImage, setSelectedImage] = useState(null);
@@ -43,7 +42,7 @@ const handleFileUpload = (e) => {
 
   const runOcr = async (file) => {
     setProcessing(true);
-    setProgress(50); // Simulate progress since backend call is synchronous-like
+    setProgress(0.5); // Simulate progress since backend call is synchronous-like
     setTextResult("");
     setMetadata(null);
     setError("");
@@ -69,7 +68,7 @@ const handleFileUpload = (e) => {
       if (!res.ok) throw new Error("OCR Server Error");
       
       const data = await res.json();
-      setProgress(100);
+      setProgress(1);
       
       setTextResult(data.rawText || "");
       setMetadata(data.metadata || null);
@@ -131,6 +130,14 @@ const handleFileUpload = (e) => {
       )}
 
       {error && <div className="error">{error}</div>}
+
+      {selectedImage && !processing && (
+        <img
+          className="upload-preview"
+          src={selectedImage}
+          alt="Selected coupon preview"
+        />
+      )}
 
       {!processing && textResult && (
         <div className="ocr-block">

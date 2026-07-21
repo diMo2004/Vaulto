@@ -48,11 +48,16 @@
     font-size: 14px;
 }
 
-.otp-links a {
+.otp-links a,
+.otp-links .text-link {
     color: #34c9b6;
-    text-decoration: none;
     font-weight: 500;
     text-decoration: underline;
+    background: none;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+    font: inherit;
 }
 
 .sub{

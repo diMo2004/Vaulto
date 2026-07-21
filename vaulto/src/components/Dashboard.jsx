@@ -1,7 +1,7 @@
 // src/components/Dashboard.jsx
 import React, { useEffect, useState, useCallback } from "react";
 import { createPortal } from "react-dom";
-import { NavLink, useNavigate, useLocation } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import "../App.css";
 import { API_BASE } from "../config/api";
 import "../styles/Dashboard.css";
@@ -20,7 +20,6 @@ import {
   ArrowRightLeft,
   Utensils,
   ShoppingBag,
-  Car,
   Apple,
   Smartphone,
   Plane,
@@ -43,7 +42,6 @@ const Dashboard = () => {
   const [loadingCoupons, setLoadingCoupons] = useState(true);
 
   const navigate = useNavigate();
-  const location = useLocation();
 
   // greeting logic
   useEffect(() => {
@@ -437,7 +435,6 @@ const Dashboard = () => {
                     if (e.key === "Enter" || e.key === " ")
                       handleCategoryAction(cat.name);
                   }}
-                  aria-pressed={activeCategory === cat.name}
                 >
                   <div className="coupon-icon-box" aria-hidden="true">
                     {cat.icon}

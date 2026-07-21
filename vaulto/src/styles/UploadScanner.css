@@ -99,6 +99,17 @@ html, body, #root {
 /* selected filename */
 .selected-name{ color:#cfe9ff; font-size:13px; margin-top:8px; }
 
+.upload-preview{
+  width:720px;
+  max-width:calc(100% - 48px);
+  max-height:320px;
+  margin-top:18px;
+  border-radius:10px;
+  border:1px solid rgba(255,255,255,0.03);
+  box-shadow: 0 16px 40px rgba(2,6,12,0.55);
+  object-fit:contain;
+}
+
 /* preview area */
 .preview-area{ width:720px; max-width:calc(100% - 48px); margin-top:18px; display:flex; justify-content:center; }
 .captured-img{ width:100%; max-width:680px; border-radius:10px; box-shadow: 0 16px 40px rgba(2,6,12,0.55); border:1px solid rgba(255,255,255,0.03); object-fit:contain; }

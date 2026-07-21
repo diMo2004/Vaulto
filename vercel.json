@@ -1,0 +1,11 @@
+{
+  "installCommand": "npm --prefix vaulto ci",
+  "buildCommand": "npm --prefix vaulto run build",
+  "outputDirectory": "vaulto/build",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}

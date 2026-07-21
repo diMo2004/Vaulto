@@ -47,12 +47,12 @@ export default function SignupUsername() {
       <div className="terms-box">
         <p>
           By tapping on <strong>‘Create account’</strong>, you agree to the
-          CouponSpot <a href="#">Terms of Use</a>.
+          CouponSpot <a href="/terms">Terms of Use</a>.
         </p>
 
         <p>
           To learn more about how CouponSpot collects and protects your
-          personal data, please see the CouponSpot <a href="#">Privacy Policy</a>.
+          personal data, please see the CouponSpot <a href="/privacy">Privacy Policy</a>.
         </p>
       </div>
 
