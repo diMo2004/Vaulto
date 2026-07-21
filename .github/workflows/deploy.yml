@@ -20,11 +20,11 @@ jobs:
       run:
         working-directory: vaulto
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
-          node-version: 20
+          node-version: 24
           cache: npm
           cache-dependency-path: vaulto/package-lock.json
 
@@ -53,9 +53,9 @@ jobs:
       run:
         working-directory: backend
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: 17
@@ -84,12 +84,12 @@ jobs:
           - name: recommendation-service
             context: recommendation-service
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: docker/setup-buildx-action@v3
+      - uses: docker/setup-buildx-action@v4
 
       - name: Build ${{ matrix.service.name }}
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: ${{ matrix.service.context }}
           push: false
@@ -103,25 +103,39 @@ jobs:
     needs: [ci-spring-backend, ci-docker-builds]
     environment: production
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Install Railway CLI
         run: npm install -g @railway/cli
 
+      - name: Check Railway configuration
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+          RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT_ID }}
+        run: |
+          test -n "$RAILWAY_TOKEN" || { echo "Missing RAILWAY_TOKEN secret"; exit 1; }
+          test -n "$RAILWAY_PROJECT_ID" || { echo "Missing RAILWAY_PROJECT_ID secret"; exit 1; }
+
       - name: Deploy backend
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-        run: railway up ./backend --path-as-root --service backend --detach
+          RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT_ID }}
+          RAILWAY_ENVIRONMENT: ${{ vars.RAILWAY_ENVIRONMENT || 'production' }}
+        run: railway up ./backend --path-as-root --project "$RAILWAY_PROJECT_ID" --environment "$RAILWAY_ENVIRONMENT" --service backend --ci
 
       - name: Deploy paddleocr-service
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-        run: railway up ./paddleocr-service --path-as-root --service paddleocr-service --detach
+          RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT_ID }}
+          RAILWAY_ENVIRONMENT: ${{ vars.RAILWAY_ENVIRONMENT || 'production' }}
+        run: railway up ./paddleocr-service --path-as-root --project "$RAILWAY_PROJECT_ID" --environment "$RAILWAY_ENVIRONMENT" --service paddleocr-service --ci
 
       - name: Deploy recommendation-service
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-        run: railway up ./recommendation-service --path-as-root --service recommendation-service --detach
+          RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT_ID }}
+          RAILWAY_ENVIRONMENT: ${{ vars.RAILWAY_ENVIRONMENT || 'production' }}
+        run: railway up ./recommendation-service --path-as-root --project "$RAILWAY_PROJECT_ID" --environment "$RAILWAY_ENVIRONMENT" --service recommendation-service --ci
 
   deploy-vercel:
     name: Deploy - Vercel Frontend
@@ -132,11 +146,11 @@ jobs:
       run:
         working-directory: vaulto
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
-          node-version: 20
+          node-version: 24
           cache: npm
           cache-dependency-path: vaulto/package-lock.json
 

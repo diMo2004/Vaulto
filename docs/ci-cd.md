@@ -32,9 +32,16 @@ Go to **Settings -> Secrets and variables -> Actions** and add these repository 
 | Secret | Used by | Notes |
 | --- | --- | --- |
 | `RAILWAY_TOKEN` | Railway deploy jobs | Create at `https://railway.com/account/tokens`. |
+| `RAILWAY_PROJECT_ID` | Railway deploy jobs | Copy from the Railway project settings or URL. |
 | `VERCEL_TOKEN` | Vercel deploy job | Create at `https://vercel.com/account/tokens`. |
 | `VERCEL_ORG_ID` | Vercel deploy job | Copy from `vaulto/.vercel/project.json` after linking the project. |
 | `VERCEL_PROJECT_ID` | Vercel deploy job | Copy from `vaulto/.vercel/project.json` after linking the project. |
+
+Optionally add this repository variable:
+
+| Variable | Default | Notes |
+| --- | --- | --- |
+| `RAILWAY_ENVIRONMENT` | `production` | Must match the Railway environment name used for live services. |
 
 ### 2. Confirm Railway Service Names
 
@@ -106,6 +113,8 @@ Start with a manual run:
 4. Choose the `main` branch.
 5. Watch all CI jobs pass before deployment starts.
 
+Use the top-level **Actions** tab for this step. The **Deployments** page under repository management only shows deployment history and does not expose the manual workflow trigger.
+
 If the `production` environment requires approval, approve the deployment when GitHub pauses at that gate.
 
 ### 7. Verify the Deployment
@@ -132,6 +141,7 @@ Also inspect Railway logs for all backend services after the first deployment:
 | Symptom | Likely cause | Fix |
 | --- | --- | --- |
 | GitHub deploy cannot authenticate to Railway | Missing or invalid `RAILWAY_TOKEN` | Recreate the Railway token and update the GitHub secret. |
+| Railway deploy says no project is linked | Missing `RAILWAY_PROJECT_ID` | Add the Railway project ID as a GitHub Actions secret. |
 | Vercel deploy fails with project lookup errors | Wrong `VERCEL_ORG_ID` or `VERCEL_PROJECT_ID` | Recopy both IDs from `vaulto/.vercel/project.json`. |
 | Google login redirects to localhost | Railway forwarded headers or OAuth redirect configuration is wrong | Confirm `server.forward-headers-strategy=framework` and the Google redirect URI. |
 | Login succeeds but cookies are missing | Cross-site cookie settings or domain mismatch | Confirm `SameSite=None`, `Secure=true`, frontend URL, backend URL, and CORS origins. |
