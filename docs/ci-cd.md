@@ -31,7 +31,8 @@ Go to **Settings -> Secrets and variables -> Actions** and add these repository 
 
 | Secret | Used by | Notes |
 | --- | --- | --- |
-| `RAILWAY_TOKEN` | Railway deploy jobs | Create at `https://railway.com/account/tokens`. |
+| `RAILWAY_TOKEN` | Railway deploy jobs | Preferred: create a Railway project token scoped to the production environment. |
+| `RAILWAY_API_TOKEN` | Railway deploy jobs | Optional fallback: use an account/workspace token if project tokens do not work for your setup. |
 | `VERCEL_TOKEN` | Vercel deploy job | Create at `https://vercel.com/account/tokens`. |
 | `VERCEL_ORG_ID` | Vercel deploy job | Copy from `vaulto/.vercel/project.json` after linking the project. |
 | `VERCEL_PROJECT_ID` | Vercel deploy job | Copy from `vaulto/.vercel/project.json` after linking the project. |
@@ -139,8 +140,9 @@ Also inspect Railway logs for all backend services after the first deployment:
 
 | Symptom | Likely cause | Fix |
 | --- | --- | --- |
-| GitHub deploy cannot authenticate to Railway | Missing or invalid `RAILWAY_TOKEN` | Recreate the Railway token and update the GitHub secret. |
-| Railway deploy says `Not signed in` | Railway CLI auth regression or invalid token | The workflow pins Railway CLI `5.2.0`; if it still fails, recreate `RAILWAY_TOKEN`. |
+| GitHub deploy cannot authenticate to Railway | Missing, invalid, or wrong-scope Railway token | Recreate the Railway project token for the production environment, or add an account/workspace token as `RAILWAY_API_TOKEN`. |
+| Railway deploy says `Invalid RAILWAY_TOKEN` | The token is not valid for that project, environment, or service | Replace `RAILWAY_TOKEN` with a project token from the Vaulto Railway project, or use `RAILWAY_API_TOKEN`. |
+| Railway deploy says `Not signed in` | Railway CLI auth regression or invalid token | The workflow pins Railway CLI `5.2.0`; if it still fails, recreate the Railway token. |
 | Vercel deploy fails with project lookup errors | Wrong `VERCEL_ORG_ID` or `VERCEL_PROJECT_ID` | Recopy both IDs from `vaulto/.vercel/project.json`. |
 | Google login redirects to localhost | Railway forwarded headers or OAuth redirect configuration is wrong | Confirm `server.forward-headers-strategy=framework` and the Google redirect URI. |
 | Login succeeds but cookies are missing | Cross-site cookie settings or domain mismatch | Confirm `SameSite=None`, `Secure=true`, frontend URL, backend URL, and CORS origins. |
