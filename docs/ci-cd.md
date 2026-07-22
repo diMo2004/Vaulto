@@ -31,8 +31,8 @@ Go to **Settings -> Secrets and variables -> Actions** and add these repository 
 
 | Secret | Used by | Notes |
 | --- | --- | --- |
-| `RAILWAY_TOKEN` | Railway deploy jobs | Preferred: create a Railway project token scoped to the production environment. |
-| `RAILWAY_API_TOKEN` | Railway deploy jobs | Optional fallback: use an account/workspace token if project tokens do not work for your setup. |
+| `RAILWAY_TOKEN` | Railway deploy jobs | Preferred. Create a Railway project token scoped to the Vaulto production environment. |
+| `RAILWAY_API_TOKEN` | Railway deploy jobs | Optional fallback. Use only if it belongs to an account/workspace with access to the Vaulto project. |
 | `RAILWAY_PROJECT_ID` | Railway deploy jobs | Required. Copy from the Railway project settings or project URL. |
 | `VERCEL_TOKEN` | Vercel deploy job | Create at `https://vercel.com/account/tokens`. |
 | `VERCEL_ORG_ID` | Vercel deploy job | Copy from `vaulto/.vercel/project.json` after linking the project. |
@@ -141,8 +141,9 @@ Also inspect Railway logs for all backend services after the first deployment:
 
 | Symptom | Likely cause | Fix |
 | --- | --- | --- |
-| GitHub deploy cannot authenticate to Railway | Missing, invalid, or wrong-scope Railway token | Recreate the Railway project token for the production environment, or add an account/workspace token as `RAILWAY_API_TOKEN`. |
+| GitHub deploy cannot authenticate to Railway | Missing, invalid, or wrong-scope Railway token | Recreate the Railway project token for the production environment and save it as `RAILWAY_TOKEN`. |
 | Railway deploy says `Invalid RAILWAY_TOKEN` | The token is not valid for that project, environment, or service | Replace `RAILWAY_TOKEN` with a project token from the Vaulto Railway project, or use `RAILWAY_API_TOKEN`. |
+| Railway deploy says `Unauthorized` for `RAILWAY_API_TOKEN` | The account/workspace token does not have access to this project | Delete the bad `RAILWAY_API_TOKEN` secret or replace it with a token from the account/workspace that owns the Vaulto Railway project. |
 | Railway deploy says no linked project was found | Missing `RAILWAY_PROJECT_ID` | Add `RAILWAY_PROJECT_ID` as a GitHub Actions secret. |
 | Railway deploy says `Not signed in` | Railway CLI auth regression or invalid token | The workflow pins Railway CLI `5.2.0`; if it still fails, recreate the Railway token. |
 | Vercel deploy fails with project lookup errors | Wrong `VERCEL_ORG_ID` or `VERCEL_PROJECT_ID` | Recopy both IDs from `vaulto/.vercel/project.json`. |
