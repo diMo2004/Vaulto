@@ -9,6 +9,8 @@ import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 
 @Component
@@ -29,11 +31,20 @@ public class JwtTokenProvider {
     private long jwtRefreshExpiration;
 
     private Key getAccessKey() {
-        return Keys.hmacShaKeyFor(jwtAccessSecret.getBytes(StandardCharsets.UTF_8));
+        return Keys.hmacShaKeyFor(normalizeSecret(jwtAccessSecret));
     }
 
     private Key getRefreshKey() {
-        return Keys.hmacShaKeyFor(jwtRefreshSecret.getBytes(StandardCharsets.UTF_8));
+        return Keys.hmacShaKeyFor(normalizeSecret(jwtRefreshSecret));
+    }
+
+    private byte[] normalizeSecret(String secret) {
+        try {
+            return MessageDigest.getInstance("SHA-256")
+                    .digest(secret.getBytes(StandardCharsets.UTF_8));
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalStateException("SHA-256 is not available", e);
+        }
     }
 
     public String generateAccessToken(String userId, String email) {
