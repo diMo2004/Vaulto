@@ -29,17 +29,12 @@ import SupportPage from "./components/Support.jsx";
 import ManualEntryPage from "./components/ManualEntry.jsx";
 import AllCouponsPage from "./components/AllCoupons.jsx";
 
-import ExpiryNotifier from "./components/ExpiryNotifier.jsx"; // 👈 NEW
-
 import "./App.css";
 
 function App() {
   return (
     <SignupProvider>
       <Router>
-        {/* Runs globally, no UI, just checks expiring coupons */}
-        <ExpiryNotifier />
-
         <Routes>
           {/* ---------- AUTH / SIGNUP FLOW ---------- */}
           <Route path="/" element={<SignupLanding />} />

@@ -1,5 +1,6 @@
 package com.vaulto.service;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -16,7 +17,8 @@ import java.util.Map;
 public class OcrService {
 
     private final RestTemplate restTemplate = new RestTemplate();
-    private final String ocrMicroserviceUrl = "http://localhost:8081/predict";
+    @Value("${OCR_SERVICE_URL:http://localhost:8081/predict}")
+    private String ocrMicroserviceUrl;
 
     public String extractTextFromImage(MultipartFile file) throws Exception {
         HttpHeaders headers = new HttpHeaders();

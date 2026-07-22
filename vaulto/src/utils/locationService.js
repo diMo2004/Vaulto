@@ -2,8 +2,6 @@ import { API_BASE } from "../config/api";
 // src/utils/locationService.js
 // Geofencing service for proximity notifications
 
-const API_BASE = `${API_BASE}`;
-
 class LocationService {
   constructor() {
     this.watchId = null;

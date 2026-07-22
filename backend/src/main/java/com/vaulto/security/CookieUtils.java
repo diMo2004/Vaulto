@@ -4,6 +4,8 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
 
 import java.util.Base64;
@@ -28,17 +30,14 @@ public class CookieUtils {
     }
 
     public void addCookie(HttpServletResponse response, String name, String value, int maxAge) {
-        Cookie cookie = new Cookie(name, value);
-        cookie.setPath("/");
-        cookie.setHttpOnly(true);
-        cookie.setMaxAge(maxAge);
-        cookie.setDomain(cookieDomain);
-        
-        // SameSite=Lax can be configured via Response cookie header, 
-        // but adding standard properties is enough for Spring generally, 
-        // for full production add sameSite and secure flags.
-        // cookie.setSecure(true); // requires HTTPS
-        response.addCookie(cookie);
+        ResponseCookie cookie = ResponseCookie.from(name, value)
+                .path("/")
+                .httpOnly(true)
+                .maxAge(maxAge)
+                .secure(true)
+                .sameSite("None")
+                .build();
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
     }
 
     public void deleteCookie(HttpServletRequest request, HttpServletResponse response, String name) {
@@ -46,11 +45,14 @@ public class CookieUtils {
         if (cookies != null) {
             for (Cookie cookie : cookies) {
                 if (cookie.getName().equals(name)) {
-                    cookie.setValue("");
-                    cookie.setPath("/");
-                    cookie.setMaxAge(0);
-                    cookie.setDomain(cookieDomain);
-                    response.addCookie(cookie);
+                    ResponseCookie deletedCookie = ResponseCookie.from(name, "")
+                            .path("/")
+                            .httpOnly(true)
+                            .maxAge(0)
+                            .secure(true)
+                            .sameSite("None")
+                            .build();
+                    response.addHeader(HttpHeaders.SET_COOKIE, deletedCookie.toString());
                 }
             }
         }

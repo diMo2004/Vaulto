@@ -1,15 +1,27 @@
 from fastapi import FastAPI, File, UploadFile
+# pyrefly: ignore [missing-import]
 from paddleocr import PaddleOCR
 import numpy as np
 from PIL import Image
 import io
 import os
+import logging
 
 app = FastAPI()
+logger = logging.getLogger(__name__)
 
-# Initialize the model once when the container starts
-# use_angle_cls=True to automatically rotate tilted text
-ocr = PaddleOCR(use_angle_cls=True, lang='en')
+ocr = None
+
+def get_ocr():
+    global ocr
+    if ocr is None:
+        logger.info("Loading PaddleOCR model...")
+        ocr = PaddleOCR(use_angle_cls=True, lang='en')
+    return ocr
+
+@app.get("/health")
+async def health():
+    return {"status": "ok"}
 
 @app.post("/predict")
 async def predict(file: UploadFile = File(...)):
@@ -19,7 +31,7 @@ async def predict(file: UploadFile = File(...)):
         img_array = np.array(image)
         
         # Perform OCR
-        result = ocr.ocr(img_array, cls=True)
+        result = get_ocr().ocr(img_array, cls=True)
         
         text_lines = []
         if result and result[0]:

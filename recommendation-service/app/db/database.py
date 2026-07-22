@@ -1,8 +1,10 @@
+# pyrefly: ignore [missing-import]
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
+# pyrefly: ignore [missing-import]
 from sqlalchemy.orm import sessionmaker, declarative_base
-from app.core.config import settings
+from app.core.config import settings, normalize_database_url
 
-engine = create_async_engine(settings.DATABASE_URL, echo=False)
+engine = create_async_engine(normalize_database_url(settings.DATABASE_URL), echo=False)
 AsyncSessionLocal = sessionmaker(
     engine, class_=AsyncSession, expire_on_commit=False
 )

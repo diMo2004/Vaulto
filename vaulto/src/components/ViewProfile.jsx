@@ -1,16 +1,13 @@
 import React, { useState, useEffect } from "react";
 import "../styles/ViewProfile.css";
-import {
 import { API_BASE } from "../config/api";
+import {
   User,
   Settings,
   LogOut,
   MapPin,
   Calendar,
   ChevronRight,
-  Home,
-  Scan,
-  Search,
   Phone,
   Mail,
   CreditCard,
@@ -22,8 +19,6 @@ import { API_BASE } from "../config/api";
 } from "lucide-react";
 
 export default function ViewProfile() {
-  const [activeTab, setActiveTab] = useState("profile");
-
   // Profile Data State (will be loaded from backend)
   const [profile, setProfile] = useState({
     username: "",

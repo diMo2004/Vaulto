@@ -1,5 +1,6 @@
 import React, { useState, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { API_BASE } from "../config/api";
 import "../styles/Signup.css";
 
 export default function PhoneOTP() {
@@ -8,6 +9,9 @@ export default function PhoneOTP() {
   const navigate = useNavigate();
 
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
+  const [loading, setLoading] = useState(false);
+  const [resending, setResending] = useState(false);
+  const [error, setError] = useState("");
   const inputRefs = useRef([]);
 
   const handleChange = (value, index) => {
@@ -18,18 +22,62 @@ export default function PhoneOTP() {
     setOtp(newOtp);
 
     if (value && index < 5) {
-      inputRefs.current[index + 1].focus();
+      inputRefs.current[index + 1]?.focus();
     }
   };
 
-  const handleNext = () => {
-    if (otp.join("").length !== 6) {
-      alert("Enter 6-digit code");
+  const handleNext = async () => {
+    const code = otp.join("");
+    if (code.length !== 6) {
+      setError("Enter the 6-digit code.");
       return;
     }
 
-    console.log("Phone number verified");
-    navigate("/dashboard");
+    setLoading(true);
+    setError("");
+
+    try {
+      const res = await fetch(`${API_BASE}/auth/phone/verify`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ phone, otp: code }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.message || "Invalid OTP.");
+      }
+
+      navigate("/dashboard");
+    } catch (err) {
+      setError(err.message || "Invalid OTP.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleResend = async () => {
+    setResending(true);
+    setError("");
+
+    try {
+      const res = await fetch(`${API_BASE}/auth/phone/start`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ phone }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.message || "Could not resend OTP.");
+      }
+    } catch (err) {
+      setError(err.message || "Could not resend OTP.");
+    } finally {
+      setResending(false);
+    }
   };
 
   return (
@@ -44,23 +92,31 @@ export default function PhoneOTP() {
             maxLength={1}
             className="otp-box"
             value={digit}
+            inputMode="numeric"
+            autoComplete="one-time-code"
             onChange={(e) => handleChange(e.target.value, idx)}
           />
         ))}
       </div>
 
       <p className="subtext">We sent a 6-digit code to {phone}</p>
+      {error && <p className="form-error">{error}</p>}
 
-      <button className="next-btn" onClick={handleNext}>
-        Next
+      <button className="next-btn" onClick={handleNext} disabled={loading}>
+        {loading ? "Verifying..." : "Next"}
       </button>
 
       <div className="otp-links">
         <p>
-          Didn’t receive code?
+          Didn't receive code?
           <br />
-          <button type="button" className="text-link">
-            Resend code
+          <button
+            type="button"
+            className="text-link"
+            onClick={handleResend}
+            disabled={resending}
+          >
+            {resending ? "Sending..." : "Resend code"}
           </button>
         </p>
 

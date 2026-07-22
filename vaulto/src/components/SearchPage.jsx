@@ -9,7 +9,7 @@ export default function SearchPage() {
   
   useEffect(() => {
     // Fetch coupons from backend
-    fetch(`${API_BASE}/coupons/all`)
+    fetch(`${API_BASE}/coupons/all`, { credentials: "include" })
       .then(res => res.json())
       .then(data => setAllCoupons(data))
       .catch(err => console.error(err));
@@ -27,10 +27,10 @@ export default function SearchPage() {
     
 
     const results = allCoupons.filter(c =>
-      c.store.toLowerCase().includes(value.toLowerCase()) ||
-      c.code.toLowerCase().includes(value.toLowerCase()) ||
-      c.discount?.toLowerCase().includes(value.toLowerCase()) ||
-      c.rawText?.toLowerCase().includes(value.toLowerCase())
+      (c.store || "").toLowerCase().includes(value.toLowerCase()) ||
+      (c.code || "").toLowerCase().includes(value.toLowerCase()) ||
+      (c.discount || "").toLowerCase().includes(value.toLowerCase()) ||
+      (c.rawText || "").toLowerCase().includes(value.toLowerCase())
     );
 
     setFilteredCoupons(results);

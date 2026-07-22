@@ -78,7 +78,8 @@ public class AuthService {
             throw new RuntimeException("Invalid OTP");
         }
 
-        Optional<User> userOpt = userRepository.findByPhone(phone);
+        String normalizedPhone = phone.trim().replaceAll("[\\s()-]", "");
+        Optional<User> userOpt = userRepository.findByPhone(normalizedPhone);
         User user;
         if (userOpt.isPresent()) {
             user = userOpt.get();
@@ -86,7 +87,7 @@ public class AuthService {
             // Register new user with phone
             user = User.builder()
                     .provider("phone")
-                    .phone(phone)
+                    .phone(normalizedPhone)
                     .build();
             user = userRepository.save(user);
         }

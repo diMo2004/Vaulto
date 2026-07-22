@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
+import java.util.Objects;
+import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
@@ -26,6 +28,8 @@ public class TwilioSmsService {
     @Value("${app.twilio.from-number}")
     private String fromNumber;
 
+    private final Random random = new Random();
+
     // Simple in-memory OTP store (In production, use Redis)
     private final Map<String, String> otpStore = new ConcurrentHashMap<>();
 
@@ -40,40 +44,51 @@ public class TwilioSmsService {
     }
 
     public void sendOtp(String toPhoneNumber) {
+        String normalizedPhoneNumber = normalizePhoneNumber(toPhoneNumber);
         String otp = generateOtp();
-        otpStore.put(toPhoneNumber, otp);
+        otpStore.put(normalizedPhoneNumber, otp);
         
         String messageBody = "Your Vaulto login code is: " + otp;
         
         try {
             if (accountSid != null && !accountSid.isEmpty() && !"your_twilio_account_sid".equals(accountSid)) {
                 Message message = Message.creator(
-                        new PhoneNumber(toPhoneNumber),
+                        new PhoneNumber(normalizedPhoneNumber),
                         new PhoneNumber(fromNumber),
                         messageBody)
                     .create();
-                logger.info("Sent OTP to {}: SID {}", toPhoneNumber, message.getSid());
+                logger.info("Sent OTP to {}: SID {}", normalizedPhoneNumber, message.getSid());
             } else {
-                logger.info("MOCK OTP sent to {}: {}", toPhoneNumber, otp);
+                logger.info("MOCK OTP sent to {}: {}", normalizedPhoneNumber, otp);
             }
         } catch (Exception e) {
-            logger.error("Failed to send OTP to {}: {}", toPhoneNumber, e.getMessage());
-            // Fallback for development if Twilio fails
-            logger.info("MOCK OTP sent to {}: {}", toPhoneNumber, otp);
+            logger.error("Failed to send OTP to {}: {}", normalizedPhoneNumber, e.getMessage());
+            throw new RuntimeException("Failed to send OTP. Please check the phone number and try again.");
         }
     }
 
     public boolean verifyOtp(String toPhoneNumber, String otp) {
-        String storedOtp = otpStore.get(toPhoneNumber);
-        if (storedOtp != null && storedOtp.equals(otp)) {
-            otpStore.remove(toPhoneNumber);
+        String normalizedPhoneNumber = normalizePhoneNumber(toPhoneNumber);
+        String storedOtp = otpStore.get(normalizedPhoneNumber);
+        if (storedOtp != null && storedOtp.equals(Objects.toString(otp, "").trim())) {
+            otpStore.remove(normalizedPhoneNumber);
             return true;
         }
         return false;
     }
 
     private String generateOtp() {
-        int otp = (int) (Math.random() * 9000) + 1000; // 4 digit OTP
-        return String.valueOf(otp);
+        return String.format("%06d", random.nextInt(1_000_000));
+    }
+
+    private String normalizePhoneNumber(String phoneNumber) {
+        if (phoneNumber == null || phoneNumber.trim().isEmpty()) {
+            throw new RuntimeException("Phone number is required");
+        }
+        String normalized = phoneNumber.trim().replaceAll("[\\s()-]", "");
+        if (!normalized.startsWith("+")) {
+            throw new RuntimeException("Phone number must include country code, for example +919876543210");
+        }
+        return normalized;
     }
 }

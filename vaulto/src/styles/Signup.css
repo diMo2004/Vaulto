@@ -64,6 +64,15 @@
     text-align: center;
 }
 
+.form-error {
+  width: 100%;
+  max-width: 720px;
+  color: #ff8a8a;
+  font-size: 0.9rem;
+  margin: -12px 0 16px;
+  text-align: center;
+}
+
 /*username page*/
 
 * {
