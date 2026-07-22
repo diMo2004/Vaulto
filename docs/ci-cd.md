@@ -33,6 +33,7 @@ Go to **Settings -> Secrets and variables -> Actions** and add these repository 
 | --- | --- | --- |
 | `RAILWAY_TOKEN` | Railway deploy jobs | Preferred: create a Railway project token scoped to the production environment. |
 | `RAILWAY_API_TOKEN` | Railway deploy jobs | Optional fallback: use an account/workspace token if project tokens do not work for your setup. |
+| `RAILWAY_PROJECT_ID` | Railway deploy jobs | Required. Copy from the Railway project settings or project URL. |
 | `VERCEL_TOKEN` | Vercel deploy job | Create at `https://vercel.com/account/tokens`. |
 | `VERCEL_ORG_ID` | Vercel deploy job | Copy from `vaulto/.vercel/project.json` after linking the project. |
 | `VERCEL_PROJECT_ID` | Vercel deploy job | Copy from `vaulto/.vercel/project.json` after linking the project. |
@@ -142,6 +143,7 @@ Also inspect Railway logs for all backend services after the first deployment:
 | --- | --- | --- |
 | GitHub deploy cannot authenticate to Railway | Missing, invalid, or wrong-scope Railway token | Recreate the Railway project token for the production environment, or add an account/workspace token as `RAILWAY_API_TOKEN`. |
 | Railway deploy says `Invalid RAILWAY_TOKEN` | The token is not valid for that project, environment, or service | Replace `RAILWAY_TOKEN` with a project token from the Vaulto Railway project, or use `RAILWAY_API_TOKEN`. |
+| Railway deploy says no linked project was found | Missing `RAILWAY_PROJECT_ID` | Add `RAILWAY_PROJECT_ID` as a GitHub Actions secret. |
 | Railway deploy says `Not signed in` | Railway CLI auth regression or invalid token | The workflow pins Railway CLI `5.2.0`; if it still fails, recreate the Railway token. |
 | Vercel deploy fails with project lookup errors | Wrong `VERCEL_ORG_ID` or `VERCEL_PROJECT_ID` | Recopy both IDs from `vaulto/.vercel/project.json`. |
 | Google login redirects to localhost | Railway forwarded headers or OAuth redirect configuration is wrong | Confirm `server.forward-headers-strategy=framework` and the Google redirect URI. |

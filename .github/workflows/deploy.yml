@@ -111,6 +111,7 @@ jobs:
         env:
           RAILWAY_PROJECT_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
           RAILWAY_ACCOUNT_TOKEN: ${{ secrets.RAILWAY_API_TOKEN }}
+          RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT_ID }}
         run: |
           if [ -n "$RAILWAY_ACCOUNT_TOKEN" ]; then
             echo "RAILWAY_API_TOKEN=$RAILWAY_ACCOUNT_TOKEN" >> "$GITHUB_ENV"
@@ -122,22 +123,24 @@ jobs:
             echo "Missing Railway secret. Add either RAILWAY_TOKEN or RAILWAY_API_TOKEN."
             exit 1
           fi
+          test -n "$RAILWAY_PROJECT_ID" || { echo "Missing RAILWAY_PROJECT_ID secret"; exit 1; }
+          echo "RAILWAY_PROJECT_ID=$RAILWAY_PROJECT_ID" >> "$GITHUB_ENV"
           railway --version
 
       - name: Deploy backend
         env:
           RAILWAY_ENVIRONMENT: ${{ vars.RAILWAY_ENVIRONMENT || 'production' }}
-        run: railway up ./backend --path-as-root --environment "$RAILWAY_ENVIRONMENT" --service backend --ci
+        run: railway up ./backend --path-as-root --project "$RAILWAY_PROJECT_ID" --environment "$RAILWAY_ENVIRONMENT" --service backend --ci
 
       - name: Deploy paddleocr-service
         env:
           RAILWAY_ENVIRONMENT: ${{ vars.RAILWAY_ENVIRONMENT || 'production' }}
-        run: railway up ./paddleocr-service --path-as-root --environment "$RAILWAY_ENVIRONMENT" --service paddleocr-service --ci
+        run: railway up ./paddleocr-service --path-as-root --project "$RAILWAY_PROJECT_ID" --environment "$RAILWAY_ENVIRONMENT" --service paddleocr-service --ci
 
       - name: Deploy recommendation-service
         env:
           RAILWAY_ENVIRONMENT: ${{ vars.RAILWAY_ENVIRONMENT || 'production' }}
-        run: railway up ./recommendation-service --path-as-root --environment "$RAILWAY_ENVIRONMENT" --service recommendation-service --ci
+        run: railway up ./recommendation-service --path-as-root --project "$RAILWAY_PROJECT_ID" --environment "$RAILWAY_ENVIRONMENT" --service recommendation-service --ci
 
   deploy-vercel:
     name: Deploy - Vercel Frontend
