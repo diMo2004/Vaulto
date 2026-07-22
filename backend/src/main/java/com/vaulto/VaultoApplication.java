@@ -14,7 +14,7 @@ public class VaultoApplication {
 	static {
 		try {
 			java.io.File envFile = new java.io.File(".env");
-			if (envFile.exists()) {
+			if (envFile.exists() && shouldLoadLocalEnvFile()) {
 				java.nio.file.Files.lines(envFile.toPath())
 					.map(String::trim)
 					.filter(line -> !line.isEmpty() && !line.startsWith("#"))
@@ -33,7 +33,7 @@ public class VaultoApplication {
 							} else if (value.startsWith("'") && value.endsWith("'")) {
 								value = value.substring(1, value.length() - 1);
 							}
-							if (System.getenv(key) == null && System.getProperty(key) == null) {
+							if (canSetLocalEnvProperty(key)) {
 								System.setProperty(key, value);
 							}
 						}
@@ -71,6 +71,28 @@ public class VaultoApplication {
 		} catch (Exception e) {
 			return mongoUri.startsWith("mongodb://localhost") ? "localhost" : "configured";
 		}
+	}
+
+	private static boolean shouldLoadLocalEnvFile() {
+		return System.getenv("RAILWAY_SERVICE_ID") == null
+				&& System.getenv("RAILWAY_PROJECT_ID") == null
+				&& System.getenv("RAILWAY_ENVIRONMENT_ID") == null
+				&& System.getenv("SPRING_DATA_MONGODB_URI") == null
+				&& System.getenv("MONGO_URI") == null
+				&& System.getenv("MONGODB_URI") == null;
+	}
+
+	private static boolean canSetLocalEnvProperty(String key) {
+		if (System.getProperty(key) != null || System.getenv(key) != null) {
+			return false;
+		}
+		return switch (key) {
+			case "spring.data.mongodb.uri", "SPRING_DATA_MONGODB_URI", "MONGO_URI", "MONGODB_URI" ->
+					System.getenv("SPRING_DATA_MONGODB_URI") == null
+							&& System.getenv("MONGO_URI") == null
+							&& System.getenv("MONGODB_URI") == null;
+			default -> true;
+		};
 	}
 
 }
