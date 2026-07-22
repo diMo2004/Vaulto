@@ -58,7 +58,7 @@ In Railway, open the Vaulto project and make sure those service names match exac
 
 Set the production runtime variables in Railway before the first deploy. At minimum, confirm:
 
-- `MONGO_URI`
+- `MONGO_URI` or `MONGODB_URI`
 - `JWT_ACCESS_SECRET`
 - `JWT_REFRESH_SECRET`
 - `GOOGLE_CLIENT_ID`
@@ -150,6 +150,7 @@ Also inspect Railway logs for all backend services after the first deployment:
 | Vercel deploy fails with project lookup errors | Wrong `VERCEL_ORG_ID` or `VERCEL_PROJECT_ID` | Recopy both IDs from `vaulto/.vercel/project.json`. |
 | Google login redirects to localhost | Railway forwarded headers or OAuth redirect configuration is wrong | Confirm `server.forward-headers-strategy=framework` and the Google redirect URI. |
 | Google shows `redirect_uri_mismatch` with an `http://backend...railway.app` URL | Spring inferred the callback scheme as HTTP behind Railway | Set Railway `GOOGLE_REDIRECT_URI=https://backend-production-26905.up.railway.app/login/oauth2/code/google` and register the same URI in Google Cloud Console. |
+| Google callback fails with MongoDB `localhost:27017` connection refused | Railway backend does not have a production MongoDB URI configured | Set `MONGO_URI` or `MONGODB_URI` in Railway to the MongoDB Atlas connection string. |
 | Login succeeds but cookies are missing | Cross-site cookie settings or domain mismatch | Confirm `SameSite=None`, `Secure=true`, frontend URL, backend URL, and CORS origins. |
 | Backend tests fail in CI | Spring context cannot start | Check CI env placeholders and MongoDB service container logs. |
 
