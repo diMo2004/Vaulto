@@ -63,6 +63,7 @@ Set the production runtime variables in Railway before the first deploy. At mini
 - `JWT_REFRESH_SECRET`
 - `GOOGLE_CLIENT_ID`
 - `GOOGLE_CLIENT_SECRET`
+- `GOOGLE_REDIRECT_URI`
 - `GOOGLE_SUCCESS_REDIRECT`
 - `GOOGLE_FAILURE_REDIRECT`
 - `COOKIE_DOMAIN`
@@ -102,7 +103,7 @@ Authorized redirect URIs:
 https://backend-production-26905.up.railway.app/login/oauth2/code/google
 ```
 
-This works with `server.forward-headers-strategy=framework`, which allows Spring Boot to respect Railway's forwarded HTTPS host and scheme.
+Set Railway `GOOGLE_REDIRECT_URI` to that exact same HTTPS value. This avoids Spring resolving the OAuth callback to `http://...` behind Railway's proxy.
 
 ### 6. Run the First Deployment
 
@@ -148,6 +149,7 @@ Also inspect Railway logs for all backend services after the first deployment:
 | Railway deploy says `Not signed in` | Railway CLI auth regression or invalid token | The workflow pins Railway CLI `5.2.0`; if it still fails, recreate the Railway token. |
 | Vercel deploy fails with project lookup errors | Wrong `VERCEL_ORG_ID` or `VERCEL_PROJECT_ID` | Recopy both IDs from `vaulto/.vercel/project.json`. |
 | Google login redirects to localhost | Railway forwarded headers or OAuth redirect configuration is wrong | Confirm `server.forward-headers-strategy=framework` and the Google redirect URI. |
+| Google shows `redirect_uri_mismatch` with an `http://backend...railway.app` URL | Spring inferred the callback scheme as HTTP behind Railway | Set Railway `GOOGLE_REDIRECT_URI=https://backend-production-26905.up.railway.app/login/oauth2/code/google` and register the same URI in Google Cloud Console. |
 | Login succeeds but cookies are missing | Cross-site cookie settings or domain mismatch | Confirm `SameSite=None`, `Secure=true`, frontend URL, backend URL, and CORS origins. |
 | Backend tests fail in CI | Spring context cannot start | Check CI env placeholders and MongoDB service container logs. |
 
