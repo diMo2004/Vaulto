@@ -5,8 +5,9 @@ services:
   - type: web
     name: vaulto-backend
     runtime: docker
-    dockerfilePath: ./backend/Dockerfile
-    dockerContext: ./backend
+    rootDir: backend
+    dockerfilePath: Dockerfile
+    dockerContext: .
     plan: free
     region: oregon # or ohio, frankfurt, singapore
     healthCheckPath: /health
@@ -48,8 +49,9 @@ services:
   - type: web
     name: vaulto-ocr
     runtime: docker
-    dockerfilePath: ./paddleocr-service/Dockerfile
-    dockerContext: ./paddleocr-service
+    rootDir: paddleocr-service
+    dockerfilePath: Dockerfile
+    dockerContext: .
     plan: free
     region: oregon
     healthCheckPath: /health
@@ -63,8 +65,9 @@ services:
   - type: web
     name: vaulto-recommendation
     runtime: docker
-    dockerfilePath: ./recommendation-service/Dockerfile
-    dockerContext: ./recommendation-service
+    rootDir: recommendation-service
+    dockerfilePath: Dockerfile
+    dockerContext: .
     plan: free
     region: oregon
     healthCheckPath: /health
