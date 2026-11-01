@@ -28,7 +28,7 @@ jobs:
           cache: npm
           cache-dependency-path: vaulto/package-lock.json
 
-      - run: npm ci
+      - run: npm ci || npm install
 
       - name: Build
         env:
@@ -129,7 +129,7 @@ jobs:
           cache: npm
           cache-dependency-path: vaulto/package-lock.json
 
-      - run: npm ci
+      - run: npm ci || npm install
 
       - name: Deploy to Vercel
         if: "${{ secrets.VERCEL_TOKEN != '' }}"
