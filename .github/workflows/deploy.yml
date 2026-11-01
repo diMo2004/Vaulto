@@ -102,16 +102,34 @@ jobs:
     needs: [ci-spring-backend, ci-docker-builds]
     steps:
       - name: Deploy Backend
-        if: "${{ secrets.RENDER_DEPLOY_HOOK_BACKEND != '' }}"
-        run: curl -s "${{ secrets.RENDER_DEPLOY_HOOK_BACKEND }}"
+        env:
+          HOOK: ${{ secrets.RENDER_DEPLOY_HOOK_BACKEND }}
+        run: |
+          if [ -n "$HOOK" ]; then
+            curl -fsS -X POST "$HOOK"
+          else
+            echo "RENDER_DEPLOY_HOOK_BACKEND secret not configured, skipping."
+          fi
 
       - name: Deploy OCR Service
-        if: "${{ secrets.RENDER_DEPLOY_HOOK_OCR != '' }}"
-        run: curl -s "${{ secrets.RENDER_DEPLOY_HOOK_OCR }}"
+        env:
+          HOOK: ${{ secrets.RENDER_DEPLOY_HOOK_OCR }}
+        run: |
+          if [ -n "$HOOK" ]; then
+            curl -fsS -X POST "$HOOK"
+          else
+            echo "RENDER_DEPLOY_HOOK_OCR secret not configured, skipping."
+          fi
 
       - name: Deploy Recommendation Service
-        if: "${{ secrets.RENDER_DEPLOY_HOOK_RECOMMENDATION != '' }}"
-        run: curl -s "${{ secrets.RENDER_DEPLOY_HOOK_RECOMMENDATION }}"
+        env:
+          HOOK: ${{ secrets.RENDER_DEPLOY_HOOK_RECOMMENDATION }}
+        run: |
+          if [ -n "$HOOK" ]; then
+            curl -fsS -X POST "$HOOK"
+          else
+            echo "RENDER_DEPLOY_HOOK_RECOMMENDATION secret not configured, skipping."
+          fi
 
   deploy-vercel:
     name: Deploy - Vercel Frontend
@@ -132,9 +150,13 @@ jobs:
       - run: npm ci || npm install
 
       - name: Deploy to Vercel
-        if: "${{ secrets.VERCEL_TOKEN != '' }}"
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-        run: npx vercel --prod --token $VERCEL_TOKEN --yes
+        run: |
+          if [ -n "$VERCEL_TOKEN" ]; then
+            npx vercel --prod --token "$VERCEL_TOKEN" --yes
+          else
+            echo "VERCEL_TOKEN secret not configured, skipping."
+          fi
