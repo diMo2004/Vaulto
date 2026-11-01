@@ -9,4 +9,4 @@ export const API_BASE =
   configuredApiBase ||
   (isLocalBrowser
     ? "http://localhost:8080"
-    : "https://backend-production-26905.up.railway.app");
+    : "https://vaulto-backend.onrender.com");
