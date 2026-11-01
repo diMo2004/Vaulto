@@ -38,6 +38,11 @@ public class AuthController {
         }
     }
 
+    @GetMapping("/google")
+    public void googleRedirect(HttpServletResponse response) throws java.io.IOException {
+        response.sendRedirect("/oauth2/authorization/google");
+    }
+
     @PostMapping("/phone/start")
     public ResponseEntity<?> startPhoneLogin(@RequestBody PhoneOtpRequest request) {
         try {
@@ -76,7 +81,7 @@ public class AuthController {
             UserResponse response = authService.getProfile(userDetails.getId());
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MessageResponse("User not found"));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MessageResponse(e.getMessage()));
         }
     }
 
