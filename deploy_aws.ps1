@@ -33,7 +33,7 @@ Write-Host "==============================================" -ForegroundColor Cya
 # ---------------------------------------------------------
 Write-Host "`n[1/5] Building Spring Boot Backend..." -ForegroundColor Yellow
 Set-Location "backend"
-.\mvnw clean package -DskipTests
+mvn clean package -DskipTests
 $jar_path = "target\$jar_file"
 
 if (-not (Test-Path $jar_path)) {
@@ -45,8 +45,10 @@ Write-Host "`n[2/5] Uploading Backend to AWS S3 & Creating Beanstalk App..." -Fo
 aws s3 mb "s3://$eb_bucket" --region $region
 aws s3 cp $jar_path "s3://$eb_bucket/$jar_file"
 
-# Create Beanstalk App
-aws elasticbeanstalk create-application --application-name $app_name > $null
+$app_info = aws elasticbeanstalk describe-applications --application-names $app_name | ConvertFrom-Json
+if ($app_info.Applications.Count -eq 0) {
+    aws elasticbeanstalk create-application --application-name $app_name > $null
+}
 
 # Create App Version
 $version_label = "v-$timestamp"
@@ -55,15 +57,23 @@ aws elasticbeanstalk create-application-version `
     --version-label $version_label `
     --source-bundle S3Bucket="$eb_bucket",S3Key="$jar_file" > $null
 
-# Create Environment (Java 17 platform)
-Write-Host "`n[3/5] Provisioning Elastic Beanstalk Environment (This takes 3-5 minutes)..." -ForegroundColor Yellow
-aws elasticbeanstalk create-environment `
-    --application-name $app_name `
-    --environment-name $env_name `
-    --version-label $version_label `
-    --solution-stack-name "64bit Amazon Linux 2023 v4.3.4 running Corretto 17" `
-    --option-settings Namespace=aws:autoscaling:launchconfiguration,OptionName=IamInstanceProfile,Value=aws-elasticbeanstalk-ec2-role `
-    > $null
+$env_info = aws elasticbeanstalk describe-environments --environment-names $env_name --include-deleted false | ConvertFrom-Json
+if ($env_info.Environments.Count -eq 0) {
+    Write-Host "`n[3/5] Provisioning Elastic Beanstalk Environment (This takes 3-5 minutes)..." -ForegroundColor Yellow
+    aws elasticbeanstalk create-environment `
+        --application-name $app_name `
+        --environment-name $env_name `
+        --version-label $version_label `
+        --solution-stack-name "64bit Amazon Linux 2023 v4.3.4 running Corretto 17" `
+        --option-settings Namespace=aws:autoscaling:launchconfiguration,OptionName=IamInstanceProfile,Value=aws-elasticbeanstalk-ec2-role `
+        > $null
+} else {
+    Write-Host "`n[3/5] Updating Elastic Beanstalk Environment..." -ForegroundColor Yellow
+    aws elasticbeanstalk update-environment `
+        --environment-name $env_name `
+        --version-label $version_label `
+        > $null
+}
 
 # Wait for environment URL
 Write-Host "Waiting for environment to be created to retrieve URL..."

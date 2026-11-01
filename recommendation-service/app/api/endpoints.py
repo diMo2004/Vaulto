@@ -57,8 +57,7 @@ async def create_coupon(coupon_data: CouponCreate, background_tasks: BackgroundT
     vector = generate_embedding(text)
     cluster_id = assign_coupon_cluster(vector)
     
-    upsert_coupon_embedding(new_coupon.id, text, payload={"cluster_id": cluster_id})
-    
+    new_coupon.embedding = vector
     new_coupon.cluster_id = cluster_id
     await db.commit()
 

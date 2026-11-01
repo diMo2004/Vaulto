@@ -96,51 +96,20 @@ jobs:
           cache-from: type=gha,scope=${{ matrix.service.name }}
           cache-to: type=gha,mode=max,scope=${{ matrix.service.name }}
 
-  deploy-railway:
-    name: Deploy - Railway
+  deploy-render:
+    name: Deploy - Render Services
     runs-on: ubuntu-latest
     needs: [ci-spring-backend, ci-docker-builds]
     environment: production
     steps:
-      - uses: actions/checkout@v7
+      - name: Deploy Backend
+        run: curl -s "${{ secrets.RENDER_DEPLOY_HOOK_BACKEND }}"
 
-      - name: Install Railway CLI
-        run: npm install -g @railway/cli@5.2.0
+      - name: Deploy OCR Service
+        run: curl -s "${{ secrets.RENDER_DEPLOY_HOOK_OCR }}"
 
-      - name: Configure Railway authentication
-        env:
-          RAILWAY_PROJECT_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-          RAILWAY_ACCOUNT_TOKEN: ${{ secrets.RAILWAY_API_TOKEN }}
-          RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT_ID }}
-        run: |
-          if [ -n "$RAILWAY_PROJECT_TOKEN" ]; then
-            echo "RAILWAY_TOKEN=$RAILWAY_PROJECT_TOKEN" >> "$GITHUB_ENV"
-            echo "Using RAILWAY_TOKEN authentication."
-          elif [ -n "$RAILWAY_ACCOUNT_TOKEN" ]; then
-            echo "RAILWAY_API_TOKEN=$RAILWAY_ACCOUNT_TOKEN" >> "$GITHUB_ENV"
-            echo "Using RAILWAY_API_TOKEN authentication."
-          else
-            echo "Missing Railway secret. Add either RAILWAY_TOKEN or RAILWAY_API_TOKEN."
-            exit 1
-          fi
-          test -n "$RAILWAY_PROJECT_ID" || { echo "Missing RAILWAY_PROJECT_ID secret"; exit 1; }
-          echo "RAILWAY_PROJECT_ID=$RAILWAY_PROJECT_ID" >> "$GITHUB_ENV"
-          railway --version
-
-      - name: Deploy backend
-        env:
-          RAILWAY_ENVIRONMENT: ${{ vars.RAILWAY_ENVIRONMENT || 'production' }}
-        run: railway up ./backend --path-as-root --project "$RAILWAY_PROJECT_ID" --environment "$RAILWAY_ENVIRONMENT" --service backend --ci
-
-      - name: Deploy paddleocr-service
-        env:
-          RAILWAY_ENVIRONMENT: ${{ vars.RAILWAY_ENVIRONMENT || 'production' }}
-        run: railway up ./paddleocr-service --path-as-root --project "$RAILWAY_PROJECT_ID" --environment "$RAILWAY_ENVIRONMENT" --service paddleocr-service --ci
-
-      - name: Deploy recommendation-service
-        env:
-          RAILWAY_ENVIRONMENT: ${{ vars.RAILWAY_ENVIRONMENT || 'production' }}
-        run: railway up ./recommendation-service --path-as-root --project "$RAILWAY_PROJECT_ID" --environment "$RAILWAY_ENVIRONMENT" --service recommendation-service --ci
+      - name: Deploy Recommendation Service
+        run: curl -s "${{ secrets.RENDER_DEPLOY_HOOK_RECOMMENDATION }}"
 
   deploy-vercel:
     name: Deploy - Vercel Frontend

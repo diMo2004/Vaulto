@@ -1,0 +1,6 @@
+backend/target/
+**/venv/
+**/__pycache__/
+**/node_modules/
+recommendation-service/data/
+.git/

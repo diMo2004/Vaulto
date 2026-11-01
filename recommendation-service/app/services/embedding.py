@@ -1,7 +1,6 @@
 from sentence_transformers import SentenceTransformer
-from qdrant_client import QdrantClient
-from qdrant_client.http import models as qmodels
 from app.core.config import settings
+import numpy as np
 import logging
 
 logger = logging.getLogger(__name__)
@@ -13,31 +12,11 @@ except Exception as e:
     logger.error(f"Failed to load sentence transformer: {e}")
     model = None
 
-# Initialize Qdrant client
-qdrant_client = QdrantClient(url=settings.QDRANT_URL)
-
 def init_qdrant():
-    try:
-        qdrant_client.get_collection(settings.QDRANT_COLLECTION_NAME)
-    except Exception as e:
-        if not model:
-            logger.warning("Skipping Qdrant initialization because embedding model is unavailable")
-            return
-        try:
-            qdrant_client.create_collection(
-                collection_name=settings.QDRANT_COLLECTION_NAME,
-                vectors_config=qmodels.VectorParams(
-                    size=model.get_sentence_embedding_dimension(),
-                    distance=qmodels.Distance.COSINE
-                )
-            )
-        except Exception as create_e:
-            if "already exists" not in str(create_e).lower():
-                logger.error("Qdrant initialization failed: %s", create_e)
-                return
+    """No-op kept for backward compatibility; vector storage is now in PostgreSQL."""
+    logger.info("Vector storage initialized with database persistence.")
 
 def generate_coupon_text(coupon) -> str:
-    # Example format from requirements
     expiry_str = f"Valid till {coupon.expiry.strftime('%B %d')}" if coupon.expiry else ""
     return f"{coupon.store} {coupon.category}\n{coupon.discount}% off\n{coupon.description}\n{coupon.tags}\n{expiry_str}"
 
@@ -47,30 +26,27 @@ def generate_embedding(text: str) -> list[float]:
     return model.encode(text).tolist()
 
 def upsert_coupon_embedding(coupon_id: int, text: str, payload: dict = None):
-    vector = generate_embedding(text)
-    if not vector:
-        return
-    try:
-        qdrant_client.upsert(
-            collection_name=settings.QDRANT_COLLECTION_NAME,
-            points=[
-                qmodels.PointStruct(
-                    id=coupon_id,
-                    vector=vector,
-                    payload=payload or {}
-                )
-            ]
-        )
-    except Exception as e:
-        logger.error("Failed to upsert coupon embedding %s: %s", coupon_id, e)
+    """Embeddings are persisted directly into the Coupon table in PostgreSQL."""
+    pass
 
-def search_similar_coupons(vector: list[float], limit: int = 10):
-    try:
-        return qdrant_client.search(
-            collection_name=settings.QDRANT_COLLECTION_NAME,
-            query_vector=vector,
-            limit=limit
-        )
-    except Exception as e:
-        logger.error("Qdrant search failed: %s", e)
+def search_similar_coupons(vector: list[float], candidate_coupons: list = None, limit: int = 10):
+    """Computes cosine similarity against candidate coupons."""
+    if not vector or not candidate_coupons:
         return []
+    
+    scored = []
+    v = np.array(vector)
+    v_norm = np.linalg.norm(v)
+    if v_norm == 0:
+        return candidate_coupons[:limit]
+
+    for c in candidate_coupons:
+        if hasattr(c, "embedding") and c.embedding:
+            c_vec = np.array(c.embedding)
+            c_norm = np.linalg.norm(c_vec)
+            if c_norm > 0:
+                sim = float(np.dot(v, c_vec) / (v_norm * c_norm))
+                scored.append((sim, c))
+    
+    scored.sort(key=lambda x: x[0], reverse=True)
+    return [c for _, c in scored[:limit]]

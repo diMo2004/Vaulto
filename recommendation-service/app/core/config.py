@@ -3,8 +3,6 @@ from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
     DATABASE_URL: str = os.getenv("DATABASE_URL", "sqlite+aiosqlite:///./test.db")
-    QDRANT_URL: str = os.getenv("QDRANT_URL", "http://localhost:6333")
-    QDRANT_COLLECTION_NAME: str = "coupons"
     EMBEDDING_MODEL: str = "all-MiniLM-L6-v2"
     
     # Recommendation weights

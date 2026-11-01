@@ -1,0 +1,7 @@
+target/
+.mvn/
+.git/
+.env
+google-cloud-key.json
+*.iml
+.idea/

@@ -17,7 +17,7 @@ import java.util.Map;
 public class OcrService {
 
     private final RestTemplate restTemplate = new RestTemplate();
-    @Value("${OCR_SERVICE_URL:http://localhost:8081/predict}")
+    @Value("${app.ocr.service-url:${OCR_SERVICE_URL:http://localhost:8081/predict}}")
     private String ocrMicroserviceUrl;
 
     public String extractTextFromImage(MultipartFile file) throws Exception {

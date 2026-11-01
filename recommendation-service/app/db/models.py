@@ -1,4 +1,6 @@
+# pyrefly: ignore [missing-import]
 from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey, Text, JSON
+# pyrefly: ignore [missing-import]
 from sqlalchemy.sql import func
 from app.db.database import Base
 
@@ -17,6 +19,7 @@ class Coupon(Base):
     tags = Column(String)  # Comma separated
     expiry = Column(DateTime(timezone=True))
     cluster_id = Column(Integer, nullable=True)
+    embedding = Column(JSON, nullable=True)
 
 class UserEvent(Base):
     __tablename__ = "user_events"

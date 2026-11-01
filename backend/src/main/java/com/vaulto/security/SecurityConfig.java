@@ -45,6 +45,7 @@ public class SecurityConfig {
             .csrf(AbstractHttpConfigurer::disable)
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
             .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/health").permitAll()
                 .requestMatchers("/auth/register", "/auth/login", "/auth/refresh-token", "/auth/logout").permitAll()
                 .requestMatchers("/oauth2/**", "/auth/google/**", "/login/oauth2/code/google").permitAll()
                 .requestMatchers("/auth/phone/start", "/auth/phone/verify").permitAll()
