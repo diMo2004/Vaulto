@@ -31,11 +31,11 @@ services:
       - key: GOOGLE_FAILURE_REDIRECT
         value: https://vaulto-woad.vercel.app
       - key: CORS_ALLOWED_ORIGINS
-        value: https://vaulto-woad.vercel.app,http://localhost:3000,http://localhost:5173
-      - key: COOKIE_DOMAIN
-        value: .onrender.com
+        value: https://vaulto-woad.vercel.app,https://vaulto.vercel.app,http://localhost:3000,http://localhost:5173
       - key: OCR_SERVICE_URL
         value: https://vaulto-ocr.onrender.com/predict
+      - key: RECOMMENDATION_SERVICE_URL
+        value: https://vaulto-recommendation.onrender.com
       - key: TWILIO_ACCOUNT_SID
         sync: false
       - key: TWILIO_AUTH_TOKEN

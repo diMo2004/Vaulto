@@ -26,23 +26,24 @@ export default function SignupUsername() {
     setError("");
 
     try {
-      const registerRes = await fetch(`${API_BASE}/auth/register`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({
-          email,
-          password,
-          dob,
-          gender,
-          username,
-          name: username,
-        }),
-      });
-
-      if (!registerRes.ok) {
-        const data = await registerRes.json().catch(() => ({}));
-        throw new Error(data.message || "Could not create account.");
+      let registered = false;
+      try {
+        const registerRes = await fetch(`${API_BASE}/auth/register`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({
+            email,
+            password,
+            dob,
+            gender,
+            username,
+            name: username,
+          }),
+        });
+        registered = registerRes.ok;
+      } catch (e) {
+        // Continue to attempt login if already registered
       }
 
       const loginRes = await fetch(`${API_BASE}/auth/login`, {
@@ -54,7 +55,14 @@ export default function SignupUsername() {
 
       if (!loginRes.ok) {
         const data = await loginRes.json().catch(() => ({}));
-        throw new Error(data.message || "Account created, but login failed.");
+        throw new Error(data.message || (registered ? "Account created, but login failed." : "Could not log in."));
+      }
+
+      const loginData = await loginRes.json().catch(() => ({}));
+      if (loginData.token) {
+        localStorage.setItem("token", loginData.token);
+        localStorage.setItem("accessToken", loginData.token);
+        sessionStorage.setItem("accessToken", loginData.token);
       }
 
       navigate("/dashboard");

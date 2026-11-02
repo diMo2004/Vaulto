@@ -9,9 +9,20 @@ export default function SearchPage() {
   
   useEffect(() => {
     // Fetch coupons from backend
-    fetch(`${API_BASE}/coupons/all`, { credentials: "include" })
+    const storedToken =
+      sessionStorage.getItem("accessToken") ||
+      localStorage.getItem("accessToken") ||
+      localStorage.getItem("token") ||
+      null;
+
+    fetch(`${API_BASE}/coupons/all`, {
+      headers: {
+        ...(storedToken ? { Authorization: `Bearer ${storedToken}` } : {}),
+      },
+      credentials: "include",
+    })
       .then(res => res.json())
-      .then(data => setAllCoupons(data))
+      .then(data => setAllCoupons(Array.isArray(data) ? data : []))
       .catch(err => console.error(err));
   }, []);
 

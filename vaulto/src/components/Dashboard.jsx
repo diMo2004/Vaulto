@@ -39,6 +39,7 @@ const Dashboard = () => {
   const [isAddMenuOpen, setIsAddMenuOpen] = useState(false);
   const [username, setUsername] = useState("");
   const [coupons, setCoupons] = useState([]);
+  const [recommendedCoupons, setRecommendedCoupons] = useState([]);
   const [loadingCoupons, setLoadingCoupons] = useState(true);
 
   const navigate = useNavigate();
@@ -58,6 +59,7 @@ const Dashboard = () => {
         const storedToken =
           sessionStorage.getItem("accessToken") ||
           localStorage.getItem("accessToken") ||
+          localStorage.getItem("token") ||
           null;
 
         const res = await fetch(`${API_BASE}/auth/me`, {
@@ -97,10 +99,12 @@ const Dashboard = () => {
   // handle token from query (if used)
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const token = params.get("token");
+    const token = params.get("token") || params.get("accessToken");
 
     if (token) {
       localStorage.setItem("token", token);
+      localStorage.setItem("accessToken", token);
+      sessionStorage.setItem("accessToken", token);
       window.history.replaceState({}, document.title, "/dashboard");
     }
   }, []);
@@ -109,7 +113,16 @@ const Dashboard = () => {
   useEffect(() => {
     async function loadCoupons() {
       try {
+        const storedToken =
+          sessionStorage.getItem("accessToken") ||
+          localStorage.getItem("accessToken") ||
+          localStorage.getItem("token") ||
+          null;
+
         const res = await fetch(`${API_BASE}/coupons/all`, {
+          headers: {
+            ...(storedToken ? { Authorization: `Bearer ${storedToken}` } : {}),
+          },
           credentials: "include",
         });
 
@@ -127,7 +140,32 @@ const Dashboard = () => {
       }
     }
 
+    async function loadRecommended() {
+      try {
+        const storedToken =
+          sessionStorage.getItem("accessToken") ||
+          localStorage.getItem("accessToken") ||
+          localStorage.getItem("token") ||
+          null;
+
+        const res = await fetch(`${API_BASE}/coupons/recommended`, {
+          headers: {
+            ...(storedToken ? { Authorization: `Bearer ${storedToken}` } : {}),
+          },
+          credentials: "include",
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          setRecommendedCoupons(Array.isArray(data) ? data : []);
+        }
+      } catch (err) {
+        setRecommendedCoupons([]);
+      }
+    }
+
     loadCoupons();
+    loadRecommended();
   }, []);
 
   const getDisplayName = (name) => {
@@ -444,6 +482,37 @@ const Dashboard = () => {
               ))}
             </div>
           </section>
+
+          {/* Recommended Coupons (from Hybrid Recommendation System) */}
+          {recommendedCoupons && recommendedCoupons.length > 0 && (
+            <section>
+              <div className="section-header">
+                <span className="section-title">✨ Recommended for You</span>
+                <span style={{ fontSize: "12px", color: "#64748b" }}>AI Powered</span>
+              </div>
+              <div className="wallet-scroll no-scroll">
+                {recommendedCoupons.slice(0, 6).map((c, idx) => (
+                  <div
+                    key={c.id || c._id || idx}
+                    className="card-item"
+                    style={{
+                      background:
+                        "linear-gradient(135deg, #1e1b4b 0%, #312e81 100%)",
+                      border: "1px solid rgba(99, 102, 241, 0.3)",
+                    }}
+                  >
+                    <div className="card-details" style={{ marginBottom: 4 }}>
+                      <h3 style={{ color: "#a5b4fc" }}>{c.store || "Featured"}</h3>
+                      <p style={{ fontWeight: 600 }}>{typeof c.discount === "number" ? `${c.discount}% OFF` : (c.discount || c.code || "Special Offer")}</p>
+                    </div>
+                    <div style={{ fontSize: "11px", color: "#94a3b8", marginTop: 4 }}>
+                      {c.category || "Hot Deal"}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
 
           {/* Recent Coupons */}
           <section>

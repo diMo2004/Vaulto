@@ -51,6 +51,7 @@ export default function CameraScanner() {
       const storedToken =
         sessionStorage.getItem("accessToken") ||
         localStorage.getItem("accessToken") ||
+        localStorage.getItem("token") ||
         null;
 
       const res = await fetch(`${API_BASE}/coupons/ocr`, {

@@ -11,11 +11,20 @@ export default function GiftPage() {
   useEffect(() => {
     async function loadCoupons() {
       try {
+        const storedToken =
+          sessionStorage.getItem("accessToken") ||
+          localStorage.getItem("accessToken") ||
+          localStorage.getItem("token") ||
+          null;
+
         const res = await fetch(`${API_BASE}/coupons/all`, {
+          headers: {
+            ...(storedToken ? { Authorization: `Bearer ${storedToken}` } : {}),
+          },
           credentials: "include"
         });
         const data = await res.json();
-        if (res.ok) setCoupons(data);
+        if (res.ok) setCoupons(Array.isArray(data) ? data : []);
       } catch (e) {
         console.error("load coupons error", e);
       }
@@ -30,9 +39,18 @@ export default function GiftPage() {
       return;
     }
 
+    const storedToken =
+      sessionStorage.getItem("accessToken") ||
+      localStorage.getItem("accessToken") ||
+      localStorage.getItem("token") ||
+      null;
+
     const res = await fetch(`${API_BASE}/coupons/gift`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        ...(storedToken ? { Authorization: `Bearer ${storedToken}` } : {}),
+      },
       credentials: "include",
       body: JSON.stringify({ couponId: selectedId, recipientEmail: email })
     });

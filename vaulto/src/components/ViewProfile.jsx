@@ -36,7 +36,16 @@ export default function ViewProfile() {
   useEffect(() => {
     async function fetchProfile() {
       try {
+        const storedToken =
+          sessionStorage.getItem("accessToken") ||
+          localStorage.getItem("accessToken") ||
+          localStorage.getItem("token") ||
+          null;
+
         const res = await fetch(`${API_BASE}/auth/me`, {
+          headers: {
+            ...(storedToken ? { Authorization: `Bearer ${storedToken}` } : {}),
+          },
           credentials: "include",
         });
 
@@ -84,11 +93,18 @@ export default function ViewProfile() {
     const backendKeys = ["name", "username", "dob", "gender", "email"];
 
     try {
+      const storedToken =
+        sessionStorage.getItem("accessToken") ||
+        localStorage.getItem("accessToken") ||
+        localStorage.getItem("token") ||
+        null;
+
       if (backendKeys.includes(editingItem.key)) {
         const res = await fetch(`${API_BASE}/auth/me`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
+            ...(storedToken ? { Authorization: `Bearer ${storedToken}` } : {}),
           },
           credentials: "include",
           body: JSON.stringify({

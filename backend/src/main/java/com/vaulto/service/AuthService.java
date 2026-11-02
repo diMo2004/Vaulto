@@ -62,9 +62,9 @@ public class AuthService {
             throw new RuntimeException("Invalid credentials");
         }
 
-        issueTokens(user, response);
+        String accessToken = issueTokens(user, response);
 
-        return new AuthResponse("Login successful", UserResponse.fromUser(user), user.getId());
+        return new AuthResponse("Login successful", UserResponse.fromUser(user), user.getId(), accessToken);
     }
 
     public void startPhoneLogin(String phone) {
@@ -92,8 +92,8 @@ public class AuthService {
             user = userRepository.save(user);
         }
 
-        issueTokens(user, response);
-        return new AuthResponse("Phone login successful", UserResponse.fromUser(user), user.getId());
+        String accessToken = issueTokens(user, response);
+        return new AuthResponse("Phone login successful", UserResponse.fromUser(user), user.getId(), accessToken);
     }
 
     public void logout(HttpServletRequest request, HttpServletResponse response) {
@@ -119,7 +119,7 @@ public class AuthService {
         return UserResponse.fromUser(user);
     }
 
-    private void issueTokens(User user, HttpServletResponse response) {
+    private String issueTokens(User user, HttpServletResponse response) {
         String accessToken = tokenProvider.generateAccessToken(user.getId(), user.getEmail());
         String refreshToken = tokenProvider.generateRefreshToken(user.getId());
 
@@ -128,5 +128,7 @@ public class AuthService {
 
         cookieUtils.addCookie(response, "accessToken", accessToken, 15 * 60);
         cookieUtils.addCookie(response, "refreshToken", refreshToken, 30 * 24 * 60 * 60);
+
+        return accessToken;
     }
 }

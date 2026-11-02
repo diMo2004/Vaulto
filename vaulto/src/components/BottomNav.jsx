@@ -24,7 +24,10 @@ export default function BottomNav({ setIsAddMenuOpen }) {
 
   const getHomePath = () => {
     const signedIn =
+      !!localStorage.getItem("token") ||
+      !!localStorage.getItem("accessToken") ||
       !!localStorage.getItem("authToken") ||
+      !!localStorage.getItem("vaulto_username") ||
       !!localStorage.getItem("vaulto_user");
     return signedIn ? "/dashboard" : "/";
   };

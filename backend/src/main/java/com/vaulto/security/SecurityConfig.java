@@ -45,7 +45,7 @@ public class SecurityConfig {
             .csrf(AbstractHttpConfigurer::disable)
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/health", "/health/ocr").permitAll()
+                .requestMatchers("/health", "/health/ocr", "/coupons/recommended").permitAll()
                 .requestMatchers("/auth/register", "/auth/login", "/auth/refresh-token", "/auth/logout").permitAll()
                 .requestMatchers("/oauth2/**", "/auth/google/**", "/login/oauth2/code/google").permitAll()
                 .requestMatchers("/auth/phone/start", "/auth/phone/verify").permitAll()
@@ -75,13 +75,21 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        // Use setAllowedOriginPatterns to support wildcards like *.vercel.app
-        // (setAllowedOrigins rejects wildcard patterns and is incompatible with allowCredentials=true)
-        configuration.setAllowedOriginPatterns(Arrays.asList(allowedOrigins));
+        // Keep configured origins and common deployment/local patterns.
+        java.util.List<String> patterns = new java.util.ArrayList<>();
+        if (allowedOrigins != null) {
+            for (String origin : allowedOrigins) {
+                if (origin != null && !origin.isBlank()) patterns.add(origin.trim());
+            }
+        }
+        patterns.add("https://*.vercel.app");
+        patterns.add("https://vaulto-woad.vercel.app");
+        patterns.add("https://vaulto.vercel.app");
+        patterns.add("http://localhost:[*]");
+        configuration.setAllowedOriginPatterns(patterns);
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
-        configuration.setExposedHeaders(List.of("Authorization", "x-auth-token"));
-        configuration.setAllowCredentials(true);
+        configuration.setExposedHeaders(List.of("Authorization", "x-auth-token"));        configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);

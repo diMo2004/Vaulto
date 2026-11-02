@@ -49,6 +49,13 @@ export default function PhoneOTP() {
         throw new Error(data.message || "Invalid OTP.");
       }
 
+      const verifyData = await res.json().catch(() => ({}));
+      if (verifyData.token) {
+        localStorage.setItem("token", verifyData.token);
+        localStorage.setItem("accessToken", verifyData.token);
+        sessionStorage.setItem("accessToken", verifyData.token);
+      }
+
       navigate("/dashboard");
     } catch (err) {
       setError(err.message || "Invalid OTP.");

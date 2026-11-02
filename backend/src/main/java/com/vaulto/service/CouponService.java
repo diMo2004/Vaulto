@@ -8,10 +8,16 @@ import com.vaulto.model.User;
 import com.vaulto.repository.CouponRepository;
 import com.vaulto.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,6 +28,18 @@ public class CouponService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Value("${app.recommendation.service-url:${RECOMMENDATION_SERVICE_URL:https://vaulto-recommendation.onrender.com}}")
+    private String recommendationServiceUrl;
+
+    private final RestTemplate recRestTemplate = createRecRestTemplate();
+
+    private static RestTemplate createRecRestTemplate() {
+        SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
+        factory.setConnectTimeout(8_000);
+        factory.setReadTimeout(12_000);
+        return new RestTemplate(factory);
+    }
 
     public Coupon addCoupon(String userId, CouponRequest request) {
         if (request.getStore() == null || request.getDiscount() == null) {
@@ -43,7 +61,9 @@ public class CouponService {
                 .usageCount(0)
                 .build();
 
-        return couponRepository.save(coupon);
+        Coupon saved = couponRepository.save(coupon);
+        syncCouponToRecommendationService(saved);
+        return saved;
     }
 
     public List<Coupon> getAllCoupons(String userId) {
@@ -141,5 +161,50 @@ public class CouponService {
         }
 
         couponRepository.delete(coupon);
+    }
+
+    public List<?> getRecommendedCoupons(String userId, int limit) {
+        if (recommendationServiceUrl != null && !recommendationServiceUrl.isBlank()) {
+            try {
+                String baseUrl = recommendationServiceUrl.replaceAll("/+$", "");
+                String targetUid = (userId != null && !userId.isBlank() && !userId.equals("default")) ? userId : "1";
+                String url = baseUrl + "/recommendations/" + targetUid + "?top_k=" + limit;
+                ResponseEntity<Map> resp = recRestTemplate.getForEntity(url, Map.class);
+                if (resp.getStatusCode().is2xxSuccessful() && resp.getBody() != null) {
+                    Object recs = resp.getBody().get("recommendations");
+                    if (recs instanceof List && !((List<?>) recs).isEmpty()) {
+                        return (List<?>) recs;
+                    }
+                }
+            } catch (Exception e) {
+                // Graceful fallback if recommendation service is asleep or cold-starting
+                System.err.println("Recommendation service fallback: " + e.getMessage());
+            }
+        }
+        return getAllCoupons(userId);
+    }
+
+    private void syncCouponToRecommendationService(Coupon saved) {
+        try {
+            if (recommendationServiceUrl != null && !recommendationServiceUrl.isBlank()) {
+                String baseUrl = recommendationServiceUrl.replaceAll("/+$", "");
+                Map<String, Object> payload = new HashMap<>();
+                payload.put("store", saved.getStore());
+                payload.put("category", saved.getCategory() != null ? saved.getCategory() : "Other");
+                payload.put("description", saved.getStore() + " - " + (saved.getDiscount() != null ? saved.getDiscount() : "offer"));
+                double discountVal = 15.0;
+                if (saved.getDiscount() != null) {
+                    try {
+                        String num = saved.getDiscount().replaceAll("[^0-9.]", "");
+                        if (!num.isBlank()) discountVal = Double.parseDouble(num);
+                    } catch (Exception ignored) {}
+                }
+                payload.put("discount", discountVal);
+                payload.put("tags", saved.getCategory() != null ? saved.getCategory() : "deal");
+                recRestTemplate.postForEntity(baseUrl + "/coupons", payload, String.class);
+            }
+        } catch (Exception ignored) {
+            // Best effort async sync
+        }
     }
 }

@@ -13,9 +13,16 @@ export default function TradePage() {
   useEffect(() => {
     async function fetchCoupons() {
       try {
-        // ✅ use the backend route that you KNOW works
-        // if you have /coupons/tradeable implemented, you can switch to that later
+        const storedToken =
+          sessionStorage.getItem("accessToken") ||
+          localStorage.getItem("accessToken") ||
+          localStorage.getItem("token") ||
+          null;
+
         const res = await fetch(`${API_BASE}/coupons/all`, {
+          headers: {
+            ...(storedToken ? { Authorization: `Bearer ${storedToken}` } : {}),
+          },
           credentials: "include",          // send cookies / auth
         });
 
@@ -24,10 +31,7 @@ export default function TradePage() {
         }
 
         const data = await res.json();
-
-        // If you have a 'tradable' flag in your Coupon model, and only want those:
-        // setCoupons(data.filter(c => c.tradable));
-        setCoupons(data);                  // show all for now
+        setCoupons(Array.isArray(data) ? data : []);
       } catch (err) {
         console.error("Failed to load coupons:", err);
       } finally {

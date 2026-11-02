@@ -75,6 +75,7 @@ const handleFileUpload = (e) => {
       const storedToken =
         sessionStorage.getItem("accessToken") ||
         localStorage.getItem("accessToken") ||
+        localStorage.getItem("token") ||
         null;
 
       const res = await fetch(`${API_BASE}/coupons/ocr`, {

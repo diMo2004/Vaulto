@@ -30,6 +30,8 @@ public class OcrService {
         SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
         factory.setConnectTimeout(45_000);  // 45 s — covers free-tier cold start on Render
         factory.setReadTimeout(90_000);     // 90 s to OCR (covers free-tier cold starts)
+        factory.setConnectTimeout(45_000);  // 45 s to connect (handles Render free-tier cold starts)
+        factory.setReadTimeout(90_000);     // 90 s to OCR
         return new RestTemplate(factory);
     }
 

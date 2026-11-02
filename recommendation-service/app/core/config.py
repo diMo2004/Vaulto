@@ -1,4 +1,5 @@
 import os
+import urllib.parse
 from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
@@ -28,8 +29,26 @@ class Settings(BaseSettings):
 settings = Settings()
 
 def normalize_database_url(database_url: str) -> str:
-    if database_url.startswith("postgresql://"):
-        return database_url.replace("postgresql://", "postgresql+asyncpg://", 1)
-    if database_url.startswith("postgres://"):
-        return database_url.replace("postgres://", "postgresql+asyncpg://", 1)
-    return database_url
+    """
+    Normalizes PostgreSQL connection strings (e.g. from NeonDB) for SQLAlchemy + asyncpg.
+    Strips parameters that asyncpg doesn't accept like 'sslmode' and 'channel_binding'.
+    """
+    if not database_url:
+        return "sqlite+aiosqlite:///./test.db"
+
+    database_url = database_url.strip()
+
+    if not (database_url.startswith("postgres://") or database_url.startswith("postgresql://")):
+        return database_url
+
+    parsed = urllib.parse.urlsplit(database_url)
+    scheme = "postgresql+asyncpg"
+    query_params = urllib.parse.parse_qs(parsed.query)
+
+    # asyncpg expects 'ssl', NOT 'sslmode'
+    # We strip 'sslmode' and 'channel_binding' from query so asyncpg does not raise unexpected kwarg errors
+    query_params.pop("sslmode", None)
+    query_params.pop("channel_binding", None)
+
+    new_query = urllib.parse.urlencode(query_params, doseq=True)
+    return urllib.parse.urlunsplit((scheme, parsed.netloc, parsed.path, new_query, parsed.fragment))

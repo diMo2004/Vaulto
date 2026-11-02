@@ -26,7 +26,16 @@ export default function ExpiringSoon() {
   useEffect(() => {
     async function loadCoupons() {
       try {
+        const storedToken =
+          sessionStorage.getItem("accessToken") ||
+          localStorage.getItem("accessToken") ||
+          localStorage.getItem("token") ||
+          null;
+
         const res = await fetch(`${API_BASE}/coupons/all`, {
+          headers: {
+            ...(storedToken ? { Authorization: `Bearer ${storedToken}` } : {}),
+          },
           credentials: "include",
         });
 

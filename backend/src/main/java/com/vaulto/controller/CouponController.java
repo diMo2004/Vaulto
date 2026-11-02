@@ -81,6 +81,12 @@ public class CouponController {
         return ResponseEntity.ok(coupons);
     }
 
+    @GetMapping("/recommended")
+    public ResponseEntity<?> getRecommendedCoupons(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestParam(defaultValue = "10") int limit) {
+        String userId = userDetails != null ? userDetails.getId() : "1";
+        return ResponseEntity.ok(couponService.getRecommendedCoupons(userId, limit));
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteCoupon(@AuthenticationPrincipal CustomUserDetails userDetails, @PathVariable String id) {
         try {

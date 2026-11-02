@@ -403,6 +403,27 @@ final_score =
 
 ---
 
+## 🚀 Production Deployment (Render + Vercel + NeonDB)
+
+Vaulto is configured for multi-service cloud production deployment:
+- **Frontend**: Hosted on [Vercel](https://vercel.com)
+- **Spring Boot Backend**: Deployed on [Render](https://render.com) (`vaulto-backend`)
+- **PaddleOCR / Tesseract Microservice**: Deployed on [Render](https://render.com) (`vaulto-ocr`)
+- **Recommendation Engine (FastAPI)**: Deployed on [Render](https://render.com) (`vaulto-recommendation`)
+- **Databases**: MongoDB Atlas (Core application data) + Neon PostgreSQL (Recommendation engine & vectors)
+
+### Blueprint (`render.yaml`)
+All 3 backend microservices are defined in `render.yaml` for one-click deployment via Render Blueprints:
+1. Connect your GitHub repository to Render.
+2. Select **Blueprints** and point to `render.yaml`.
+3. Provide the required environment variables:
+   - `SPRING_DATA_MONGODB_URI`: MongoDB connection string.
+   - `DATABASE_URL`: Neon PostgreSQL connection string (supports `?sslmode=require` with automatic asyncpg handling).
+   - `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET`: For Google OAuth2.
+   - Twilio credentials (optional, for SMS OTP login).
+
+---
+
 ## ☁️ AWS Deployment (Free Tier)
 
 Vaulto includes an automated PowerShell script for deploying to AWS Free Tier.

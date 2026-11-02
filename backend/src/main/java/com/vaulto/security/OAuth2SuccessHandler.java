@@ -91,7 +91,14 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
             cookieUtils.addCookie(response, "accessToken", accessToken, 15 * 60); // 15 mins
             cookieUtils.addCookie(response, "refreshToken", refreshToken, 30 * 24 * 60 * 60); // 30 days
 
-            getRedirectStrategy().sendRedirect(request, response, successRedirectUrl);
+            String redirect = successRedirectUrl;
+            if (!redirect.contains("?")) {
+                redirect += "?token=" + accessToken;
+            } else {
+                redirect += "&token=" + accessToken;
+            }
+
+            getRedirectStrategy().sendRedirect(request, response, redirect);
         } catch (Exception e) {
             logger.error("Google OAuth success handling failed", e);
             getRedirectStrategy().sendRedirect(request, response, failureRedirectUrl + "?oauth=failed");
