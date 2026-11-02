@@ -45,12 +45,24 @@ public class SecurityConfig {
             .csrf(AbstractHttpConfigurer::disable)
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/health").permitAll()
+                .requestMatchers("/health", "/health/ocr").permitAll()
                 .requestMatchers("/auth/register", "/auth/login", "/auth/refresh-token", "/auth/logout").permitAll()
                 .requestMatchers("/oauth2/**", "/auth/google/**", "/login/oauth2/code/google").permitAll()
                 .requestMatchers("/auth/phone/start", "/auth/phone/verify").permitAll()
+                .requestMatchers("/coupons/recommended").permitAll()
                 .anyRequest().authenticated()
             )
+            // API calls from the React app must get a 401, not a 302 redirect to Google
+            // (a redirected fetch() fails with a confusing CORS error in the browser).
+            .exceptionHandling(ex -> ex.defaultAuthenticationEntryPointFor(
+                (request, response, authException) -> {
+                    response.setStatus(401);
+                    response.setContentType("application/json");
+                    response.getWriter().write("{\"message\":\"Not authenticated. Please log in again.\"}");
+                },
+                request -> !request.getRequestURI().startsWith("/oauth2")
+                        && !request.getRequestURI().startsWith("/login")
+            ))
             .oauth2Login(oauth2 -> oauth2
                 .successHandler(oAuth2SuccessHandler)
                 .failureHandler(new SimpleUrlAuthenticationFailureHandler(oauthFailureRedirectUrl + "?oauth=failed"))
@@ -63,12 +75,14 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList(allowedOrigins));
+        // Use setAllowedOriginPatterns to support wildcards like *.vercel.app
+        // (setAllowedOrigins rejects wildcard patterns and is incompatible with allowCredentials=true)
+        configuration.setAllowedOriginPatterns(Arrays.asList(allowedOrigins));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("authorization", "content-type", "x-auth-token"));
-        configuration.setExposedHeaders(List.of("x-auth-token"));
+        configuration.setAllowedHeaders(List.of("*"));
+        configuration.setExposedHeaders(List.of("Authorization", "x-auth-token"));
         configuration.setAllowCredentials(true);
-        
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;

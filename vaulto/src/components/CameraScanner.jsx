@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Webcam from "react-webcam";
 import "../styles/CameraScanner.css";
 import { useNavigate } from "react-router-dom";
@@ -24,6 +24,12 @@ export default function CameraScanner() {
   const [processing, setProcessing] = useState(false);
   const [textResult, setTextResult] = useState("");
   const [metadata, setMetadata] = useState(null);
+
+  // Free-tier hosts put idle services to sleep. Poke the backend (which pokes the OCR service)
+  // as soon as this page opens so they are awake by the time a picture is taken/uploaded.
+  useEffect(() => {
+    fetch(`${API_BASE}/health/ocr`).catch(() => {});
+  }, []);
 
   // Capture a screenshot from webcam
   const capturePhoto = () => {
@@ -56,8 +62,22 @@ export default function CameraScanner() {
         body: formData,
       });
 
-      if (!res.ok) throw new Error("OCR Server Error");
-      
+      if (!res.ok) {
+        let message = "";
+        try {
+          message = (await res.json())?.message || "";
+        } catch (e) {
+          /* not JSON */
+        }
+        const failure = new Error(
+          res.status === 401 || res.status === 403
+            ? "You are not logged in (or your session expired). Please log in again and retry."
+            : message || `OCR server error (HTTP ${res.status}).`
+        );
+        failure.fromServer = true;
+        throw failure;
+      }
+
       const data = await res.json();
       
       setTextResult(data.rawText || "");
@@ -66,7 +86,11 @@ export default function CameraScanner() {
       console.log("Extracted Metadata:", data.metadata);
     } catch (err) {
       console.error(err);
-      setTextResult("OCR failed. Check if backend and Docker OCR microservice are running.");
+      setTextResult(
+        err.fromServer
+          ? err.message
+          : `Cannot reach the backend at ${API_BASE}. Make sure it is running and REACT_APP_API_BASE is correct.`
+      );
     } finally {
       setProcessing(false);
     }

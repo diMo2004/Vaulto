@@ -1,8 +1,22 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "../styles/UploadScanner.css";
 import { useNavigate } from "react-router-dom";
 import { API_BASE } from "../config/api";
-
+// Turn a failed OCR request into a message that says what actually went wrong.
+async function readOcrError(res) {
+  let message = "";
+  try {
+    const data = await res.json();
+    message = data?.message || "";
+  } catch (e) {
+    /* response was not JSON */
+  }
+  if (res.status === 401 || res.status === 403) {
+    return "You are not logged in (or your session expired). Please log in again and retry.";
+  }
+  if (res.status === 413) return "Image is too large. Please choose a smaller image.";
+  return message || `OCR server error (HTTP ${res.status}).`;
+}
 export default function UploadScanner() {
   const [selectedImage, setSelectedImage] = useState(null);
   const [selectedFileName, setSelectedFileName] = useState("");
@@ -13,6 +27,12 @@ export default function UploadScanner() {
   const [error, setError] = useState("");
   const fileRef = useRef(null);
   const navigate = useNavigate();
+
+  // Free-tier hosts put idle services to sleep. Poke the backend (which pokes the OCR service)
+  // as soon as this page opens so they are awake by the time a picture is taken/uploaded.
+  useEffect(() => {
+    fetch(`${API_BASE}/health/ocr`).catch(() => {});
+  }, []);
 
   const handleFile = (file) => {
     setError("");
@@ -30,6 +50,7 @@ export default function UploadScanner() {
 const handleFileUpload = (e) => {
     const file = e.target.files?.[0];
     handleFile(file);
+    e.target.value = ""; // allow picking the same file again
   };
 
   const onDrop = (e) => {
@@ -65,8 +86,12 @@ const handleFileUpload = (e) => {
         body: formData,
       });
 
-      if (!res.ok) throw new Error("OCR Server Error");
-      
+      if (!res.ok) {
+        const failure = new Error(await readOcrError(res));
+        failure.fromServer = true;
+        throw failure;
+      }
+
       const data = await res.json();
       setProgress(1);
       
@@ -74,7 +99,11 @@ const handleFileUpload = (e) => {
       setMetadata(data.metadata || null);
     } catch (err) {
       console.error(err);
-      setError("OCR failed. Check if backend and Docker OCR microservice are running.");
+      setError(
+        err.fromServer
+          ? err.message
+          : `Cannot reach the backend at ${API_BASE}. Make sure it is running and REACT_APP_API_BASE is correct.`
+      );
     } finally {
       setProcessing(false);
       setProgress(0);
@@ -123,6 +152,9 @@ const handleFileUpload = (e) => {
       {processing && (
         <div className="processing">
           <div className="processing-text">Processing… {Math.round(progress * 100)}%</div>
+          <div className="processing-text" style={{ fontSize: "0.8rem", opacity: 0.7 }}>
+            The first scan can take up to a minute while the servers wake up.
+          </div>
           <div className="progress-bar">
             <div className="progress-fill" style={{ width: `${Math.round(progress * 100)}%` }} />
           </div>

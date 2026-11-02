@@ -130,7 +130,7 @@ export default function AddCoupon() {
           name="category"
           value={formData.category}
           onChange={handleChange}
-        >No
+        >
           <option>All</option>
           <option>Food</option>
           <option>Groceries</option>

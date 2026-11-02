@@ -225,7 +225,9 @@ TWILIO_FROM_NUMBER=+1XXXXXXXXXX
 ---
 
 ### 4) PaddleOCR Service setup
-The OCR microservice runs on port `8081` and is called by the Spring Boot backend.
+The OCR microservice (Tesseract-based) runs on port `8081` and is called by the Spring Boot backend.
+
+> **Windows users:** use Option A (Docker). Option B needs the Tesseract engine installed separately and on your PATH, otherwise every scan fails.
 
 **Option A — Docker (recommended):**
 ```bash
